@@ -52,15 +52,15 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if 'tables' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "tables" %}">
-            <i class="material-symbols-rounded opacity-5">table_view</i>
-            <span class="nav-link-text ms-1">Таблицы</span>
+          <a class="nav-link {% if 'cashflows' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "cashflows:cashflows" %}">
+            <i class="material-symbols-rounded opacity-5">receipt_long</i>
+            <span class="nav-link-text ms-1">Движения денежных <br> средств</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if 'billing' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "billing" %}">
-            <i class="material-symbols-rounded opacity-5">receipt_long</i>
-            <span class="nav-link-text ms-1">Счета</span>
+          <a class="nav-link {% if 'tables' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "tables" %}">
+            <i class="material-symbols-rounded opacity-5">table_view</i>
+            <span class="nav-link-text ms-1">Таблицы</span>
           </a>
         </li>
         <!-- <li class="nav-item">
