@@ -52,11 +52,11 @@ class CashflowSubcategory(models.Model):
 class CashflowManager(models.Manager):    
     def for_current_month(self): 
         date_range = self._get_date_range_for_current_month() 
-        return self.filter(date__range=date_range)
+        return self.filter(created_at__range=date_range)
     
     def for_previous_month(self): 
         date_range = self._get_date_range_for_previous_month() 
-        return self.filter(date__range=date_range)
+        return self.filter(created_at__range=date_range)
 
     def _get_date_range_for_current_month(self):
         today = date.today()
@@ -74,7 +74,7 @@ class CashflowManager(models.Manager):
 
 
 class Cashflow(models.Model): 
-    date = models.DateField('Дата') 
+    created_at = models.DateTimeField('Дата', auto_now_add=True) 
     amount = models.DecimalField('Сумма', max_digits=10, decimal_places=2) 
     comment = models.TextField('Комментарий', null=True, blank=True, max_length=100)
     cashflow_status = models.ForeignKey(verbose_name='Статус', to=CashflowStatus, on_delete=models.CASCADE)
@@ -88,4 +88,4 @@ class Cashflow(models.Model):
     class Meta: 
         verbose_name = 'Движение денежных средств'
         verbose_name_plural = 'ДДС'
-        ordering = ['-date']
+        ordering = ['-created_at']
