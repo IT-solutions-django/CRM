@@ -1,0 +1,315 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load price_filters %}
+
+{% block content %}
+
+    <div class="container-fluid py-2">
+      <div class="row">
+        <div class="ms-3">
+          <h3 class="mb-0 h4 font-weight-bolder">Статистика</h3>
+          <p class="mb-4">
+            Сводная информация о доходах и расходах за текущий месяц
+          </p>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-2 ps-3">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p class="text-sm mb-0">Бизнес: доходы</p>
+                  <h4 class="mb-0">{{ stats.curr_month.business_incomes.absolute|price_format }} ₽</h4>
+                </div>
+                <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+                  <i class="material-symbols-rounded opacity-10">weekend</i>
+                </div>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-2 ps-3">
+              <p class="mb-0 text-sm">
+                {% with stats.curr_month.business_incomes.relative as relative_value %}
+                  {% if relative_value > 0 %}
+                    <span class="text-success font-weight-bolder">
+                      +{{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% elif relative_value == 0 %}
+                    как и в прошлом месяце
+                  {% else %}
+                    <span class="text-danger font-weight-bolder">
+                      {{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% endif %}
+                {% endwith %}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-2 ps-3">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p class="text-sm mb-0">Бизнес: расходы</p>
+                  <h4 class="mb-0">{{ stats.curr_month.business_expenses.absolute|price_format }} ₽</h4>
+                </div>
+                <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+                  <i class="material-symbols-rounded opacity-10">person</i>
+                </div>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-2 ps-3">
+              <p class="mb-0 text-sm">
+                {% with stats.curr_month.business_expenses.relative as relative_value %}
+                  {% if relative_value > 0 %}
+                    <span class="text-danger font-weight-bolder">
+                      +{{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% elif relative_value == 0 %}
+                    как и в прошлом месяце
+                  {% else %}
+                    <span class="text-success font-weight-bolder">
+                      {{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% endif %}
+                {% endwith %}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-2 ps-3">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p class="text-sm mb-0">Личное: расходы</p>
+                  <h4 class="mb-0">{{ stats.curr_month.personal_expenses.absolute|price_format }} ₽</h4>
+                </div>
+                <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+                  <i class="material-symbols-rounded opacity-10">leaderboard</i>
+                </div>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-2 ps-3">
+              <p class="mb-0 text-sm">
+                {% with stats.curr_month.personal_expenses.relative as relative_value %}
+                  {% if relative_value > 0 %}
+                    <span class="text-dark font-weight-bolder">
+                      +{{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% elif relative_value == 0 %}
+                    как и в прошлом месяце
+                  {% else %}
+                    <span class="text-dark font-weight-bolder">
+                      {{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% endif %}
+                {% endwith %}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card">
+            <div class="card-header p-2 ps-3">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p class="text-sm mb-0">Налоги: расходы</p>
+                  <h4 class="mb-0">{{ stats.curr_month.personal_expenses.absolute|price_format }} ₽</h4>
+                </div>
+                <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+                  <i class="material-symbols-rounded opacity-10">weekend</i>
+                </div>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-2 ps-3">
+              <p class="mb-0 text-sm">
+                {% with stats.curr_month.tax_expenses.relative as relative_value %}
+                  {% if relative_value > 0 %}
+                    <span class="text-danger font-weight-bolder">
+                      +{{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% elif relative_value == 0 %}
+                    как и в прошлом месяце
+                  {% else %}
+                    <span class="text-success font-weight-bolder">
+                      {{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% endif %}
+                  
+                {% endwith %}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="card mb-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+              <h6 class="text-white ps-3">Движения денежных средств</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Тип</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Подкатегория</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Категория</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Статус</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Сумма</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Комментарий</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Дата</th>
+                    <th class="text-secondary opacity-7"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for cashflow in all_cashflows %}
+                  <tr>
+                    <td>
+                      <p class="text-sm font-weight-bold mb-0">
+                        {{ cashflow.cashflow_type }}
+                      </p>
+                    </td>
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">{{ cashflow.cashflow_subcategory.name }}</h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="text-sm text-secondary mb-0">{{ cashflow.cashflow_category.name }}</p>
+                    </td>
+                    <td class="text-center text-sm">
+                      {{ cashflow.cashflow_status.name }}
+                    </td>
+                    <td class="align-middle text-center">
+                      <div class="d-flex align-items-center justify-content-end text-sm font-weight-bold
+                      {% if cashflow.cashflow_type.name == 'Списание' %}
+                        text-danger
+                      {% else %}
+                        text-success
+                      {% endif %}">
+                        {{ cashflow.amount }} ₽
+                      </div>
+                    
+                    </td>
+                    <td>
+                      <div class="text-sm px-1">
+                        {% if cashflow.comment %}
+                          <small>{{ cashflow.comment }}</small>
+                        {% else %}
+                          ...
+                        {% endif %}
+                      </div>
+                    </td>
+                    <td class="align-middle text-center">
+                      <span class="text-secondary text-xs font-weight-bold">{{ cashflow.date|date:"d.m.Y" }}</span>
+                    </td>
+                    <td class="align-middle d-flex justify-content-center align-items-center">
+                      <button class="btn btn-dark mb-0">
+                        Редактировать
+                      </button>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    
+    </div>
+
+
+    <script>
+      const Endpoints = {
+        GET_CATEGORIES: `api/get_categories/`, 
+        GET_SUBCATEGORIES: `api/get_subcategories/`,
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        const cashflowTypeField = document.getElementById('id_cashflow_type');
+        const cashflowCategoryField = document.getElementById('id_cashflow_category');
+        const cashflowSubcategoryField = document.getElementById('id_cashflow_subcategory');
+
+        updateCategoriesField()
+    
+        // Очистка выбора
+        function clearOptions(field) {
+          field.innerHTML = '<option value="">---------</option>';
+        }
+
+        // Обновление поля "Категория"
+        function updateCategoriesField(cashflowTypeId) {
+          clearOptions(cashflowCategoryField);
+          clearOptions(cashflowSubcategoryField);
+
+          if (cashflowTypeId) {
+            fetch(`${Endpoints.GET_CATEGORIES}${cashflowTypeId}`)
+              .then(response => response.json())
+              .then(data => {
+                data.forEach(category => {
+                  const option = document.createElement('option');
+                  option.value = category.id;
+                  option.textContent = category.name;
+                  cashflowCategoryField.appendChild(option);
+                });
+              })
+              .catch(error => console.error('Error fetching categories:', error));
+          } else {
+            clearOptions(cashflowCategoryField)
+          }
+        } 
+
+        // Обновление поля "Подкатегория"
+        function updateSubcategoriesField(cashflowCategoryId) {
+            clearOptions(cashflowSubcategoryField);
+
+            if (cashflowCategoryId) {
+              fetch(`${Endpoints.GET_SUBCATEGORIES}${cashflowCategoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                  data.forEach(subcategory => {
+                    const option = document.createElement('option');
+                    option.value = subcategory.id;
+                    option.textContent = subcategory.name;
+                    cashflowSubcategoryField.appendChild(option);
+                  });
+                })
+                .catch(error => console.error('Error fetching subcategories:', error));
+            } else {
+              clearOptions(cashflowSubcategoryField)
+            }
+          }
+
+    
+          cashflowTypeField.addEventListener('change', function() {
+            updateCategoriesField(this.value);
+          });
+
+          cashflowCategoryField.addEventListener('change', function() {
+            updateSubcategoriesField(this.value);
+          });
+      });
+    </script>
+    
+
+{% endblock content %}
