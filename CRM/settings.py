@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+from enum import Enum
 from pathlib import Path
 import os 
 from dotenv import load_dotenv

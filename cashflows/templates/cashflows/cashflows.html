@@ -6,103 +6,19 @@
 
     <div class="container-fluid py-2">
       <div class="row">
-        <div class="col-lg-4">
-          
-          <div class="card pb-4">
-            <div class="card-header pb-0 px-3">
-              <h6 class="mb-0">Добавить движение денежных средств</h6>
-            </div>
-            <div class="card-body pt-4 p-3">
-              <form action="" method="POST">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <div class="d-flex justify-content-center">
-                  <button class="btn btn-lg btn-dark">Добавить ДДС</button>
-                </div>
-              </form>
-            </div>
-          </div>
-
+        <div class="ms-3">
+          <h3 class="mb-0 h4 font-weight-bolder">Статистика</h3>
+          <p class="mb-4">
+            Сводная информация о доходах и расходах за текущий месяц
+          </p>
         </div>
-
-
-        <div class="col-sm-4">
-          <div class="card h-100 mb-4">
-            <div class="card-header pb-0 px-3">
-              <div class="row">
-                <div class="col-md-6">
-                  <h6 class="mb-0">Ваши транзакции</h6>
-                </div>
-                <div class="col-md-6 d-flex justify-content-start justify-content-md-end align-items-center">
-                  <i class="material-symbols-rounded me-2 text-lg">date_range</i>
-                  <small>23 - 30 March 2020</small>
-                </div>
-              </div>
-            </div>
-            <div class="card-body pt-4 p-3">
-              <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Последние</h6>
-              <ul class="list-group">
-                {% for cashflow in newest_cashflows %}
-                  <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                    <div class="d-flex align-items-center">
-                      {% if cashflow.cashflow_type.name == 'Списание' %}
-                        <button class="btn btn-icon-only btn-rounded btn-outline-danger mb-0 me-3 p-3 btn-sm d-flex align-items-center justify-content-center"><i class="material-symbols-rounded text-lg">expand_more</i>
-                        </button>
-                      {% else %}
-                        <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 p-3 btn-sm d-flex align-items-center justify-content-center"><i class="material-symbols-rounded text-lg">expand_less</i></button>
-                      {% endif %}
-            
-                      <div class="d-flex flex-column">
-                        <h6 class="mb-1 text-dark text-sm">{{ cashflow.cashflow_subcategory }}</h6>
-                        <span class="text-xs">{{ cashflow.cashflow_category.name }}, {{ cashflow.date|date:"d.m.Y" }}</span>
-                      </div>
-                    </div>
-                    <div class="d-flex align-items-center text-sm font-weight-bold
-                    {% if cashflow.cashflow_type.name == 'Списание' %}
-                      text-danger
-                    {% else %}
-                      text-success
-                    {% endif %}">
-                      {{ cashflow.amount|price_format }} ₽
-                    </div>
-                  </li>
-                {% endfor %}
-               
-            </div>
-          </div>
-        </div>
-
-
-        <div class="col-lg-4">
-          <div class="card mb-2">
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
             <div class="card-header p-2 ps-3">
               <div class="d-flex justify-content-between">
                 <div>
-                  <p class="text-sm mb-0">Статистика</p>
-                  <h4 class="mb-0">За последний месяц</h4>
-                </div>
-                <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
-                  <i class="material-symbols-rounded opacity-10">weekend</i>
-                </div>
-              </div>
-            </div>
-            <hr class="dark horizontal my-0">
-            {% for cashflow_type in cashflow_types %}
-              <div class="card-footer p-2 ps-3">
-                <h6>{{ cashflow_type.name }}</h6>
-                <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+55% </span></p>
-                <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+55% </span></p>
-              </div>
-            {% endfor %}
-            
-          </div>
-
-          <div class="card mb-2">
-            <div class="card-header p-2 ps-3">
-              <div class="d-flex justify-content-between">
-                <div>
-                  <p class="text-sm mb-0 text-capitalize"></p>
-                  <h4 class="mb-0">$53k</h4>
+                  <p class="text-sm mb-0">Бизнес: доходы</p>
+                  <h4 class="mb-0">{{ stats.curr_month.business_incomes.absolute|price_format }} ₽</h4>
                 </div>
                 <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
                   <i class="material-symbols-rounded opacity-10">weekend</i>
@@ -111,16 +27,103 @@
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-2 ps-3">
-              <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+55% </span>than last week</p>
+              <p class="mb-0 text-sm">
+                {% with stats.curr_month.business_incomes.relative as relative_value %}
+                  {% if relative_value > 0 %}
+                    <span class="text-success font-weight-bolder">
+                      +{{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% elif relative_value == 0 %}
+                    как и в прошлом месяце
+                  {% else %}
+                    <span class="text-danger font-weight-bolder">
+                      {{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% endif %}
+                {% endwith %}
+              </p>
             </div>
           </div>
-
-          <div class="card mb-2">
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
             <div class="card-header p-2 ps-3">
               <div class="d-flex justify-content-between">
                 <div>
-                  <p class="text-sm mb-0 text-capitalize"></p>
-                  <h4 class="mb-0">$53k</h4>
+                  <p class="text-sm mb-0">Бизнес: расходы</p>
+                  <h4 class="mb-0">{{ stats.curr_month.business_expenses.absolute|price_format }} ₽</h4>
+                </div>
+                <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+                  <i class="material-symbols-rounded opacity-10">person</i>
+                </div>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-2 ps-3">
+              <p class="mb-0 text-sm">
+                {% with stats.curr_month.business_expenses.relative as relative_value %}
+                  {% if relative_value > 0 %}
+                    <span class="text-danger font-weight-bolder">
+                      +{{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% elif relative_value == 0 %}
+                    как и в прошлом месяце
+                  {% else %}
+                    <span class="text-success font-weight-bolder">
+                      {{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% endif %}
+                {% endwith %}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-2 ps-3">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p class="text-sm mb-0">Личное: расходы</p>
+                  <h4 class="mb-0">{{ stats.curr_month.personal_expenses.absolute|price_format }} ₽</h4>
+                </div>
+                <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+                  <i class="material-symbols-rounded opacity-10">leaderboard</i>
+                </div>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-2 ps-3">
+              <p class="mb-0 text-sm">
+                {% with stats.curr_month.personal_expenses.relative as relative_value %}
+                  {% if relative_value > 0 %}
+                    <span class="text-dark font-weight-bolder">
+                      +{{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% elif relative_value == 0 %}
+                    как и в прошлом месяце
+                  {% else %}
+                    <span class="text-dark font-weight-bolder">
+                      {{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% endif %}
+                {% endwith %}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card">
+            <div class="card-header p-2 ps-3">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p class="text-sm mb-0">Налоги: расходы</p>
+                  <h4 class="mb-0">{{ stats.curr_month.personal_expenses.absolute|price_format }} ₽</h4>
                 </div>
                 <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
                   <i class="material-symbols-rounded opacity-10">weekend</i>
@@ -129,18 +132,31 @@
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-2 ps-3">
-              <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+55% </span>than last week</p>
+              <p class="mb-0 text-sm">
+                {% with stats.curr_month.tax_expenses.relative as relative_value %}
+                  {% if relative_value > 0 %}
+                    <span class="text-danger font-weight-bolder">
+                      +{{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% elif relative_value == 0 %}
+                    как и в прошлом месяце
+                  {% else %}
+                    <span class="text-success font-weight-bolder">
+                      {{ relative_value|price_int_format }}%
+                    </span>
+                    по сравнению с прошлым месяцем
+                  {% endif %}
+                  
+                {% endwith %}
+              </p>
             </div>
           </div>
-
         </div>
-
-
       </div>
 
       <div class="row mt-5">
         <div class="card mb-4">
-
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
               <h6 class="text-white ps-3">Движения денежных средств</h6>
@@ -152,8 +168,8 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Тип</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Категория</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Подкатегория</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Категория</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Статус</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Сумма</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Комментарий</th>
@@ -165,24 +181,19 @@
                   {% for cashflow in all_cashflows %}
                   <tr>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ cashflow.cashflow_type }}</p>
+                      <p class="text-sm font-weight-bold mb-0">
+                        {{ cashflow.cashflow_type }}
+                      </p>
                     </td>
                     <td>
                       <div class="d-flex px-2 py-1">
-                        <div>
-                          {% if cashflow.cashflow_type.name == 'Списание' %}
-                            <button class="btn btn-icon-only btn-rounded btn-outline-danger mb-0 me-3 p-3 btn-sm d-flex align-items-center justify-content-center"><i class="material-symbols-rounded text-lg">expand_more</i></button>
-                          {% else %}
-                            <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 p-3 btn-sm d-flex align-items-center justify-content-center"><i class="material-symbols-rounded text-lg">expand_less</i></button>
-                          {% endif %}                        
-                        </div>
                         <div class="d-flex flex-column justify-content-center">
                           <h6 class="mb-0 text-sm">{{ cashflow.cashflow_subcategory.name }}</h6>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <p class="text-xs text-secondary mb-0">{{ cashflow.cashflow_category.name }}</p>
+                      <p class="text-sm text-secondary mb-0">{{ cashflow.cashflow_category.name }}</p>
                     </td>
                     <td class="text-center text-sm">
                       {{ cashflow.cashflow_status.name }}
@@ -201,7 +212,7 @@
                     <td>
                       <div class="text-sm px-1">
                         {% if cashflow.comment %}
-                          <small>{{ cashflow.comment|truncatewords_html:4 }}</small>
+                          <small>{{ cashflow.comment }}</small>
                         {% else %}
                           ...
                         {% endif %}
@@ -223,6 +234,7 @@
           </div>
         </div>
       </div>
+      
     
     </div>
 

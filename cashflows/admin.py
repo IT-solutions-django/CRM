@@ -24,7 +24,13 @@ class CashflowSubcategoryInline(admin.TabularInline):
 
 @admin.register(Cashflow)
 class CashflowAdmin(admin.ModelAdmin): 
-    list_display = ['date', 'amount']
+    list_display = [
+        'cashflow_subcategory', 
+        'cashflow_category', 
+        'date', 
+        'amount',
+        'comment'
+    ]
 
 
 @admin.register(CashflowStatus)

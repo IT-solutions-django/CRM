@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views import View 
+from django.db.models import Sum
 from .forms import CashflowForm
 from .models import (
     Cashflow, 
@@ -9,10 +10,16 @@ from .models import (
     CashflowCategory, 
     CashflowSubcategory
 )
+from .services import (
+    CashflowStats, 
+    calculate_percentage_difference, 
+    generate_stats,
+)
 
 
 class CashflowsView(View): 
     def get(self, request): 
+        form = CashflowForm()
         cashflow_types = CashflowType.objects.all()
         cashflow_statuses = CashflowStatus.objects.all()
         cashflow_categories = CashflowCategory.objects.all() 
@@ -21,7 +28,8 @@ class CashflowsView(View):
         last_cashflows = Cashflow.objects.all()[:10]
         all_cashflows = Cashflow.objects.all()[:100]
 
-        form = CashflowForm()
+        stats = generate_stats()
+
         context = {
             'segment': 'cashflows', 
 
@@ -33,8 +41,10 @@ class CashflowsView(View):
             'cashflow_statuses': cashflow_statuses, 
             'cashflow_categories': cashflow_categories, 
             'cashflow_subcategories': cashflow_subcategories,
+
+            'stats': stats
         }
-        return render(request, 'pages/cashflows.html', context)
+        return render(request, 'cashflows/cashflows.html', context)
     
     def post(self, request): 
         form = CashflowForm(request.POST) 
