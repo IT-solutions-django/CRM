@@ -124,3 +124,12 @@ class CashflowFilterForm(forms.Form):
             'class': 'form-select',
         })
     )
+
+
+class BankStatementForm(forms.Form):
+    xlsx_file = forms.FileField(
+        label='Excel-файл с выпиской из банка', 
+        widget=forms.FileInput(attrs={
+            'class': 'custom-file-input'
+        })
+    ) 

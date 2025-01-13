@@ -2,16 +2,14 @@ from decimal import Decimal
 from django.db.models import Sum
 from django.db.models import QuerySet
 from django.db.models.query import QuerySet
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import json
 
-from .models import (
+from ..models import (
     Cashflow, 
     CashflowType, 
     CashflowCategory, 
     CashflowSubcategory
 )
-from .config import CASHFLOWS_NAMES
+from ..config import CASHFLOWS_NAMES
 
 
 class CashflowStats: 
@@ -53,33 +51,11 @@ class CashflowStats:
             return Cashflow.objects.for_current_month().filter(
                 cashflow_category=category, 
             ).aggregate(Sum('amount')).get('amount__sum') or Decimal(0)   
-        
-        # def get_category_incomes(category: QuerySet) -> Decimal: 
-        #     return Cashflow.objects.for_current_month().filter(
-        #         cashflow_category=category, 
-        #         cashflow_type__name=CASHFLOWS_NAMES.Types.INCOMES,
-        #     ).aggregate(Sum('amount')).get('amount__sum') or Decimal(0) 
-        # def get_category_expenses(category: QuerySet) -> Decimal: 
-        #     return Cashflow.objects.for_current_month().filter(
-        #         cashflow_category=category, 
-        #         cashflow_type__name=CASHFLOWS_NAMES.Types.EXPENSES,
-        #     ).aggregate(Sum('amount')).get('amount__sum') or Decimal(0)
 
         def get_subcategory_amount(subcategory: QuerySet) -> Decimal: 
             return Cashflow.objects.for_current_month().filter(
                 cashflow_subcategory=subcategory, 
             ).aggregate(Sum('amount')).get('amount__sum') or Decimal(0)  
-        
-        # def get_subcategory_incomes(subcategory: QuerySet) -> Decimal: 
-        #     return Cashflow.objects.for_current_month().filter(
-        #         cashflow_subcategory=subcategory, 
-        #         cashflow_type__name=CASHFLOWS_NAMES.Types.EXPENSES,
-        #     ).aggregate(Sum('amount')).get('amount__sum') or Decimal(0) 
-        # def get_subcategory_expenses(subcategory: QuerySet) -> Decimal: 
-        #     return Cashflow.objects.for_current_month().filter(
-        #         cashflow_subcategory=subcategory, 
-        #         cashflow_type__name=CASHFLOWS_NAMES.Types.EXPENSES,
-        #     ).aggregate(Sum('amount')).get('amount__sum') or Decimal(0) 
 
     class PreviousMonth: 
         def get_incomes() -> Decimal: 
@@ -113,35 +89,16 @@ class CashflowStats:
                 cashflow_status__name=CASHFLOWS_NAMES.Statuses.PERSONAL, 
                 cashflow_type__name=CASHFLOWS_NAMES.Types.EXPENSES,
             ).aggregate(Sum('amount')).get('amount__sum') or Decimal(0)  
+        
         def get_category_amount(category: QuerySet) -> Decimal: 
             return Cashflow.objects.for_previous_month().filter(
                 cashflow_category=category, 
             ).aggregate(Sum('amount')).get('amount__sum') or Decimal(0) 
-        # def get_category_incomes(category: QuerySet) -> Decimal: 
-        #     return Cashflow.objects.for_previous_month().filter(
-        #         cashflow_category=category, 
-        #         cashflow_type__name=CASHFLOWS_NAMES.Types.INCOMES,
-        #     ).aggregate(Sum('amount')).get('amount__sum') or Decimal(0) 
-        # def get_category_expenses(category: QuerySet) -> Decimal: 
-        #     return Cashflow.objects.for_previous_month().filter(
-        #         cashflow_category=category, 
-        #         cashflow_type__name=CASHFLOWS_NAMES.Types.EXPENSES,
-        #     ).aggregate(Sum('amount')).get('amount__sum') or Decimal(0) 
+        
         def get_subcategory_amount(subcategory: QuerySet) -> Decimal: 
             return Cashflow.objects.for_previous_month().filter(
                 cashflow_subcategory=subcategory, 
             ).aggregate(Sum('amount')).get('amount__sum') or Decimal(0) 
-        
-        # def get_subcategory_incomes(subcategory: QuerySet) -> Decimal: 
-        #     return Cashflow.objects.for_previous_month().filter(
-        #         cashflow_subcategory=subcategory, 
-        #         cashflow_type__name=CASHFLOWS_NAMES.Types.EXPENSES,
-        #     ).aggregate(Sum('amount')).get('amount__sum') or Decimal(0) 
-        # def get_subcategory_expenses(subcategory: QuerySet) -> Decimal: 
-        #     return Cashflow.objects.for_previous_month().filter(
-        #         cashflow_subcategory=subcategory, 
-        #         cashflow_type__name=CASHFLOWS_NAMES.Types.EXPENSES,
-        #     ).aggregate(Sum('amount')).get('amount__sum') or Decimal(0) 
 
 
 def calculate_percentage_difference(old_amount, new_amount) -> float: 
@@ -269,17 +226,4 @@ def generate_stats() -> dict:
             } for cashflow_subcategory in cashflow_subcategories
         ],
     }
-    print(stats)
     return stats
-
-
-def get_paginated_collection(request, collection: QuerySet, count_per_page: int = 10): 
-    paginator = Paginator(collection, count_per_page)
-    page_number = request.GET.get('page', 1)
-    try:
-        collection = paginator.page(page_number)
-    except PageNotAnInteger:
-        collection = paginator.page(1)
-    except EmptyPage:
-        collection = paginator.page(paginator.num_pages) 
-    return collection

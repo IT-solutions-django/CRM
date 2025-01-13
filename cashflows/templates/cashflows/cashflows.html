@@ -39,7 +39,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="editForm" action="/cashflows/edit-cashflow" method="POST">
+        <form id="editForm" action="{% url 'cashflows:edit_cashflow' %}?{{ request.GET.urlencode }}" method="POST">
           {% csrf_token %}
         
         </div>
@@ -53,7 +53,33 @@
 </div>
 <!--  -->
 
-
+<!-- Модальное окно для загрузки выписки из банка -->
+<div class="modal fade" id="loadBankStatementModal" tabindex="-1" aria-labelledby="loadBankStatementModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="loadBankStatementModalLabel">Загрузить данные из выписки из банка</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form 
+          id="loadBankStatementForm" 
+          action="{% url 'cashflows:load_bank_statement' %}" 
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          {{ bank_statement_form }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+          <button type="submit" class="btn btn-primary">Загрузить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!--  -->
 
     <div class="container-fluid py-2">
       <div class="row">
@@ -84,14 +110,14 @@
                     <span class="text-success font-weight-bolder">
                       +{{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем ({{stats.business_incomes.prev_month}} ₽)
+                    по сравнению с прошлым месяцем ({{stats.business_incomes.prev_month|price_format}} ₽)
                   {% elif relative_value == 0 %}
                     как и в прошлом месяце
                   {% else %}
                     <span class="text-danger font-weight-bolder">
                       {{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем ({{stats.business_incomes.prev_month}} ₽)
+                    по сравнению с прошлым месяцем ({{stats.business_incomes.prev_month|price_format}} ₽)
                   {% endif %}
                 {% endwith %}
               </p>
@@ -119,14 +145,14 @@
                     <span class="text-danger font-weight-bolder">
                       +{{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем ({{stats.business_expenses.prev_month}} ₽)
+                    по сравнению с прошлым месяцем ({{stats.business_expenses.prev_month|price_format}} ₽)
                   {% elif relative_value == 0 %}
                     как и в прошлом месяце
                   {% else %}
                     <span class="text-success font-weight-bolder">
                       {{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем ({{stats.business_expenses.prev_month}} ₽)
+                    по сравнению с прошлым месяцем ({{stats.business_expenses.prev_month|price_format}} ₽)
                   {% endif %}
                 {% endwith %}
               </p>
@@ -154,14 +180,14 @@
                     <span class="text-dark font-weight-bolder">
                       +{{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем ({{stats.personal_expenses.prev_month}} ₽)
+                    по сравнению с прошлым месяцем ({{stats.personal_expenses.prev_month|price_format}} ₽)
                   {% elif relative_value == 0 %}
                     как и в прошлом месяце
                   {% else %}
                     <span class="text-dark font-weight-bolder">
                       {{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем ({{stats.personal_expenses.prev_month}} ₽)
+                    по сравнению с прошлым месяцем ({{stats.personal_expenses.prev_month|price_format}} ₽)
                   {% endif %}
                 {% endwith %}
               </p>
@@ -189,14 +215,14 @@
                     <span class="text-danger font-weight-bolder">
                       +{{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем ({{stats.tax_expenses.prev_month}} ₽)
+                    по сравнению с прошлым месяцем ({{stats.tax_expenses.prev_month|price_format}} ₽)
                   {% elif relative_value == 0 %}
                     как и в прошлом месяце
                   {% else %}
                     <span class="text-success font-weight-bolder">
                       {{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем ({{stats.tax_expenses.prev_month}} ₽)
+                    по сравнению с прошлым месяцем ({{stats.tax_expenses.prev_month|price_format}} ₽)
                   {% endif %}
                 {% endwith %}
               </p>
@@ -210,7 +236,10 @@
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
             <div class="bg-gradient-dark shadow-dark border-radius-lg pt-3 pb-3 d-flex justify-content-between align-items-center">
               <h6 class="text-white ps-3 mb-0">Движения денежных средств</h6>
-              <a data-bs-toggle="modal" data-bs-target="#addCashflowModal" class="btn bg-white mb-0 me-3" href="javascript:;"><i class="material-symbols-rounded text-sm">add</i>&nbsp;&nbsp;Добавить</a>
+              <div>
+                <a data-bs-toggle="modal" data-bs-target="#loadBankStatementModal" class="btn bg-white mb-0 me-3" href="javascript:;"><i class="material-symbols-rounded text-sm">add</i>&nbsp;&nbsp;Загрузить выписку из банка</a>
+                <a data-bs-toggle="modal" data-bs-target="#addCashflowModal" class="btn bg-white mb-0 me-3" href="javascript:;"><i class="material-symbols-rounded text-sm">add</i>&nbsp;&nbsp;Добавить</a>
+              </div>
             </div>
           </div>
 
@@ -394,14 +423,14 @@
                         <span class="text-success font-weight-bolder">
                           +{{ relative_value|price_int_format }}%
                         </span>
-                        по сравнению с прошлым месяцем ({{type_stats.prev_month}} ₽)
+                        по сравнению с прошлым месяцем ({{type_stats.prev_month|price_format}} ₽)
                       {% elif relative_value == 0 %}
                         как и в прошлом месяце
                       {% else %}
                         <span class="text-danger font-weight-bolder">
                           {{ relative_value|price_int_format }}%
                         </span>
-                        по сравнению с прошлым месяцем ({{type_stats.prev_month}} ₽)
+                        по сравнению с прошлым месяцем ({{type_stats.prev_month|price_format}} ₽)
                       {% endif %}
                     {% endwith %}
                   </p>
@@ -432,14 +461,14 @@
                         <span class="text-success font-weight-bolder">
                           +{{ relative_value|price_int_format }}%
                         </span>
-                        по сравнению с прошлым месяцем ({{category_stats.prev_month}} ₽)
+                        по сравнению с прошлым месяцем ({{category_stats.prev_month|price_format}} ₽)
                       {% elif relative_value == 0 %}
                         как и в прошлом месяце
                       {% else %}
                         <span class="text-danger font-weight-bolder">
                           {{ relative_value|price_int_format }}%
                         </span>
-                        по сравнению с прошлым месяцем ({{category_stats.prev_month}} ₽)
+                        по сравнению с прошлым месяцем ({{category_stats.prev_month|price_format}} ₽)
                       {% endif %}
                     {% endwith %}
                   </p>
@@ -471,14 +500,14 @@
                         <span class="text-success font-weight-bolder">
                           +{{ relative_value|price_int_format }}%
                         </span>
-                        по сравнению с прошлым месяцем ({{subcategory_stats.prev_month}} ₽)
+                        по сравнению с прошлым месяцем ({{subcategory_stats.prev_month|price_format}} ₽)
                       {% elif relative_value == 0 %}
                         как и в прошлом месяце
                       {% else %}
                         <span class="text-danger font-weight-bolder">
                           {{ relative_value|price_int_format }}%
                         </span>
-                        по сравнению с прошлым месяцем ({{subcategory_stats.prev_month}} ₽)
+                        по сравнению с прошлым месяцем ({{subcategory_stats.prev_month|price_format}} ₽)
                       {% endif %}
                     {% endwith %}
                   </p>
@@ -493,18 +522,31 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   <script> 
-  // Сохраннеие текущих фильтров при пагинации
-  document.addEventListener("DOMContentLoaded", (() => {
-    document.querySelectorAll(".pagination a").forEach((e => {
-        e.addEventListener("click", (a => {
-            a.preventDefault();
-            const n = new URL(e.href);
-            new URLSearchParams(window.location.search).forEach(((e, a) => {
-                n.searchParams.has(a) || n.searchParams.set(a, e)
-            })), window.location.href = n.toString()
-        }))
-    }))
-  })) 
+    document.addEventListener("DOMContentLoaded", (() => {
+      // Сохраннеие текущих фильтров при пагинации
+      document.querySelectorAll(".pagination a").forEach((e => {
+          e.addEventListener("click", (a => {
+              a.preventDefault();
+              const n = new URL(e.href);
+              new URLSearchParams(window.location.search).forEach(((e, a) => {
+                  n.searchParams.has(a) || n.searchParams.set(a, e)
+              })), window.location.href = n.toString()
+          }))
+      }))
+
+      // Сохранение текущих фильтров при сохранении отредактированного ДДС 
+      document.querySelectorAll(".pagination a").forEach((e => {
+          e.addEventListener("click", (a => {
+              a.preventDefault();
+              const n = new URL(e.href);
+              new URLSearchParams(window.location.search).forEach(((e, a) => {
+                  n.searchParams.has(a) || n.searchParams.set(a, e)
+              })), window.location.href = n.toString()
+          }))
+      }))
+    })) 
+
+
   </script>
     <script>
       // Обновление категорий и подкатегорий
@@ -650,6 +692,9 @@
 
           if (cashflowCategoryId) {
             initializeSubcategoriesFields(cashflowCategoryId)
+          } else {
+            clearOptions(cashflowCategoryField);
+            clearOptions(cashflowSubcategoryField)
           }
           if (cashflowTypeId) {
             initializeCategoriesFields(cashflowTypeId);
@@ -661,10 +706,10 @@
           clearOptions(cashflowCategoryField);
           clearOptions(cashflowSubcategoryField)
           if (cashflowTypeId) {
+            console.log('fgtrfw')
             fetch(`${Endpoints.GET_CATEGORIES}${cashflowTypeId}`)
               .then(response => response.json())
               .then(data => {
-                // clearOptions(cashflowCategoryField);
                 data.forEach(category => {
                   const option = document.createElement('option');
                   option.value = category.id;
@@ -688,6 +733,7 @@
           const selectedSubcategoryValue = cashflowSubcategoryField.value;
           clearOptions(cashflowSubcategoryField);
           if (cashflowCategoryId) {
+            console.log('fgertsihjub')
             fetch(`${Endpoints.GET_SUBCATEGORIES}${cashflowCategoryId}`)
               .then(response => response.json())
               .then(data => {
@@ -768,19 +814,40 @@
       // Форма редактирования
       document.querySelectorAll('.edit-btn').forEach(function(button) {
         button.addEventListener('click', function() {
-            const cashflowId = this.getAttribute('data-id'); // Получаем ID ДДС из атрибута data-id
+          const cashflowId = this.getAttribute('data-id'); // Получаем ID ДДС из атрибута data-id
 
-            fetch(`/cashflows/api/get_rendered_edit_form/${cashflowId}/`, {
-                method: 'GET'
-            })
-            .then(response => response.json()) 
-            .then(data => {
-                document.getElementById('editForm').innerHTML = data; 
-                handleUpdatingEditFormFields();
-            })
-            .catch(error => console.error('Ошибка:', error));
-        });
-    });
+          fetch(`/cashflows/api/get_rendered_edit_form/${cashflowId}/`, {
+              method: 'GET'
+          })
+          .then(response => response.json()) 
+          .then(data => {
+              document.getElementById('editForm').innerHTML = data; 
+              handleUpdatingEditFormFields();
+
+              const editForm = document.getElementById('editForm').querySelector('form');
+              if (editForm) {
+                const urlParams = new URLSearchParams(window.location.search);
+                editForm.addEventListener('submit', (event) => {
+                  const formData = new FormData(editForm);
+
+                  // Добавляем параметры из URL, которые еще не есть в форме
+                  urlParams.forEach((value, key) => {
+                    if (!formData.has(key)) {
+                      const hiddenInput = document.createElement('input');
+                      hiddenInput.type = 'hidden';
+                      hiddenInput.name = key;
+                      hiddenInput.value = value;
+                      editForm.appendChild(hiddenInput);
+                    }
+                  });
+                });
+              }
+          })
+          .catch(error => console.error('Ошибка:', error));
+         });
+      });
+
+    
     </script>
 
 {% endblock content %}

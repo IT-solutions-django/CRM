@@ -1,10 +1,14 @@
 from django.shortcuts import redirect, render
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
+from django.urls import reverse
 from django.views import View 
-from django.template.loader import render_to_string 
+from django.template.loader import render_to_string
+
+from cashflows.services.xlsx_parser import load_cashflows_from_file 
 from .forms import (
     CashflowForm, 
     CashflowFilterForm,
+    BankStatementForm,
 )
 from .models import (
     Cashflow, 
@@ -13,23 +17,22 @@ from .models import (
     CashflowCategory, 
     CashflowSubcategory
 )
-from .services import (
-    generate_stats,
-    get_paginated_collection
-)
+from .services.pagination import get_paginated_collection
+from .services.stats import generate_stats
 
 
 class CashflowsView(View): 
     def get(self, request): 
         create_cashflow_form = CashflowForm()
         filter_form = CashflowFilterForm(request.GET)
+        bank_statement_form = BankStatementForm()
         cashflow_types = CashflowType.objects.all()
         cashflow_statuses = CashflowStatus.objects.all()
         cashflow_categories = CashflowCategory.objects.all() 
         cashflow_subcategories = CashflowSubcategory.objects.all()
         stats = generate_stats()
 
-        cashflows = Cashflow.objects.for_current_month()
+        cashflows = Cashflow.objects.all()
         if filter_form.is_valid():
             cd = filter_form.cleaned_data
             if cd['cashflow_type_filter']:
@@ -59,6 +62,8 @@ class CashflowsView(View):
 
             'form': create_cashflow_form,
             'filter_form': filter_form, 
+            'bank_statement_form': bank_statement_form,
+
             'all_cashflows': cashflows,
 
             'cashflow_types': cashflow_types, 
@@ -88,23 +93,29 @@ class CashflowsView(View):
 
             return redirect('cashflows:cashflows')
         else: 
-            form = CashflowForm()
+            create_cashflow_form = CashflowForm()
+            filter_form = CashflowFilterForm(request.GET)
+            bank_statement_form = BankStatementForm()
             cashflow_types = CashflowType.objects.all()
             cashflow_statuses = CashflowStatus.objects.all()
             cashflow_categories = CashflowCategory.objects.all() 
             cashflow_subcategories = CashflowSubcategory.objects.all()
 
-            last_cashflows = Cashflow.objects.all()[:10]
-            all_cashflows = Cashflow.objects.all()[:100].order_by('-date')
-
             stats = generate_stats()
+
+            cashflows = get_paginated_collection(
+                request=request, collection=cashflows, 
+                count_per_page=5
+            )
 
             context = {
                 'segment': 'cashflows', 
 
-                'form': form, 
-                'newest_cashflows': last_cashflows,
-                'all_cashflows': all_cashflows,
+                'form': create_cashflow_form,
+                'filter_form': filter_form, 
+                'bank_statement_form': bank_statement_form,
+
+                'all_cashflows': cashflows,
 
                 'cashflow_types': cashflow_types, 
                 'cashflow_statuses': cashflow_statuses, 
@@ -113,7 +124,6 @@ class CashflowsView(View):
 
                 'stats': stats
             }
-
         return render(request, 'cashflows/cashflows.html', context)
     
 
@@ -122,6 +132,8 @@ class EditCashflowView(View):
         cashflow_id = request.POST.get('cashflow_id')
         form = CashflowForm(request.POST) 
 
+        print(request.POST)
+
         if form.is_valid(): 
             cd = form.cleaned_data
 
@@ -129,17 +141,28 @@ class EditCashflowView(View):
 
             edited_cashflow.amount = cd.get('amount')
             edited_cashflow.comment = cd.get('comment')
-
             edited_cashflow.cashflow_status = cd.get('cashflow_status')
             edited_cashflow.cashflow_type = cd.get('cashflow_type')
             edited_cashflow.cashflow_category = cd.get('cashflow_category')
             edited_cashflow.cashflow_subcategory = cd.get('cashflow_subcategory')
             
             edited_cashflow.save()
-            return redirect('cashflows:cashflows')
+
+            query_params = request.GET.urlencode()
+            redirect_url = reverse('cashflows:cashflows')  
+            full_redirect_url = f"{redirect_url}?{query_params}" if query_params else redirect_url
+
+            return HttpResponseRedirect(full_redirect_url)
         else: 
             return redirect('cashflows:cashflows')
-    
+        
+
+class LoadBankStatementView(View): 
+    def post(self, request): 
+        xlsx_file = request.FILES['xlsx_file'] 
+        
+        load_cashflows_from_file(xlsx_file)
+
 
 
 class GetRenderedEditForm(View): 
@@ -155,6 +178,8 @@ class GetRenderedEditForm(View):
             request=request
         )
         return JsonResponse(rendered_edit_form, safe=False)
+    
+
 
 
 def get_categories(request, cashflow_type_id: int) -> JsonResponse: 
@@ -173,7 +198,7 @@ def get_subcategories(request, cashflow_category_id: int) -> JsonResponse:
 
 
 
-class test_stats_api(View): 
+class StatsAPIView(View): 
     def get(self, request): 
         stats = generate_stats()
 

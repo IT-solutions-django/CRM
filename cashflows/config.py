@@ -10,3 +10,7 @@ class CASHFLOWS_NAMES:
     class Types: 
         INCOMES = 'Пополнение'
         EXPENSES = 'Списание'
+
+    class Categories: 
+        PERSONAL = 'Личные потребности'
+        BUSINESS = 'Бизнес'
