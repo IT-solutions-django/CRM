@@ -3,6 +3,9 @@
 {% load price_filters %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+
 <!-- Модальное окно для добавления ДДС -->
 <div class="modal fade" id="addCashflowModal" tabindex="-1" aria-labelledby="addCashflowModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -27,12 +30,12 @@
 </div>
 <!--  -->
 
-<!--  -->
+<!-- Модальное окно для редактирования ДДС -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="editModalLabel">Добавить движение денежных средств</h5>
+        <h5 class="modal-title" id="editModalLabel">Редактировать движение денежных средств</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -66,7 +69,7 @@
               <div class="d-flex justify-content-between">
                 <div>
                   <p class="text-sm mb-0">Бизнес: доходы</p>
-                  <h4 class="mb-0">{{ stats.curr_month.business_incomes.absolute|price_format }} ₽</h4>
+                  <h4 class="mb-0">{{ stats.business_incomes.absolute|price_format }} ₽</h4>
                 </div>
                 <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
                   <i class="material-symbols-rounded opacity-10">weekend</i>
@@ -76,19 +79,19 @@
             <hr class="dark horizontal my-0">
             <div class="card-footer p-2 ps-3">
               <p class="mb-0 text-sm">
-                {% with stats.curr_month.business_incomes.relative as relative_value %}
+                {% with stats.business_incomes.relative as relative_value %}
                   {% if relative_value > 0 %}
                     <span class="text-success font-weight-bolder">
                       +{{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем
+                    по сравнению с прошлым месяцем ({{stats.business_incomes.prev_month}} ₽)
                   {% elif relative_value == 0 %}
                     как и в прошлом месяце
                   {% else %}
                     <span class="text-danger font-weight-bolder">
                       {{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем
+                    по сравнению с прошлым месяцем ({{stats.business_incomes.prev_month}} ₽)
                   {% endif %}
                 {% endwith %}
               </p>
@@ -101,7 +104,7 @@
               <div class="d-flex justify-content-between">
                 <div>
                   <p class="text-sm mb-0">Бизнес: расходы</p>
-                  <h4 class="mb-0">{{ stats.curr_month.business_expenses.absolute|price_format }} ₽</h4>
+                  <h4 class="mb-0">{{ stats.business_expenses.absolute|price_format }} ₽</h4>
                 </div>
                 <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
                   <i class="material-symbols-rounded opacity-10">person</i>
@@ -111,19 +114,19 @@
             <hr class="dark horizontal my-0">
             <div class="card-footer p-2 ps-3">
               <p class="mb-0 text-sm">
-                {% with stats.curr_month.business_expenses.relative as relative_value %}
+                {% with stats.business_expenses.relative as relative_value %}
                   {% if relative_value > 0 %}
                     <span class="text-danger font-weight-bolder">
                       +{{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем
+                    по сравнению с прошлым месяцем ({{stats.business_expenses.prev_month}} ₽)
                   {% elif relative_value == 0 %}
                     как и в прошлом месяце
                   {% else %}
                     <span class="text-success font-weight-bolder">
                       {{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем
+                    по сравнению с прошлым месяцем ({{stats.business_expenses.prev_month}} ₽)
                   {% endif %}
                 {% endwith %}
               </p>
@@ -136,7 +139,7 @@
               <div class="d-flex justify-content-between">
                 <div>
                   <p class="text-sm mb-0">Личное: расходы</p>
-                  <h4 class="mb-0">{{ stats.curr_month.personal_expenses.absolute|price_format }} ₽</h4>
+                  <h4 class="mb-0">{{ stats.personal_expenses.absolute|price_format }} ₽</h4>
                 </div>
                 <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
                   <i class="material-symbols-rounded opacity-10">leaderboard</i>
@@ -146,19 +149,19 @@
             <hr class="dark horizontal my-0">
             <div class="card-footer p-2 ps-3">
               <p class="mb-0 text-sm">
-                {% with stats.curr_month.personal_expenses.relative as relative_value %}
+                {% with stats.personal_expenses.relative as relative_value %}
                   {% if relative_value > 0 %}
                     <span class="text-dark font-weight-bolder">
                       +{{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем
+                    по сравнению с прошлым месяцем ({{stats.personal_expenses.prev_month}} ₽)
                   {% elif relative_value == 0 %}
                     как и в прошлом месяце
                   {% else %}
                     <span class="text-dark font-weight-bolder">
                       {{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем
+                    по сравнению с прошлым месяцем ({{stats.personal_expenses.prev_month}} ₽)
                   {% endif %}
                 {% endwith %}
               </p>
@@ -171,7 +174,7 @@
               <div class="d-flex justify-content-between">
                 <div>
                   <p class="text-sm mb-0">Налоги: расходы</p>
-                  <h4 class="mb-0">{{ stats.curr_month.tax_expenses.absolute|price_format }} ₽</h4>
+                  <h4 class="mb-0">{{ stats.tax_expenses.absolute|price_format }} ₽</h4>
                 </div>
                 <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
                   <i class="material-symbols-rounded opacity-10">weekend</i>
@@ -181,21 +184,20 @@
             <hr class="dark horizontal my-0">
             <div class="card-footer p-2 ps-3">
               <p class="mb-0 text-sm">
-                {% with stats.curr_month.tax_expenses.relative as relative_value %}
+                {% with stats.tax_expenses.relative as relative_value %}
                   {% if relative_value > 0 %}
                     <span class="text-danger font-weight-bolder">
                       +{{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем
+                    по сравнению с прошлым месяцем ({{stats.tax_expenses.prev_month}} ₽)
                   {% elif relative_value == 0 %}
                     как и в прошлом месяце
                   {% else %}
                     <span class="text-success font-weight-bolder">
                       {{ relative_value|price_int_format }}%
                     </span>
-                    по сравнению с прошлым месяцем
+                    по сравнению с прошлым месяцем ({{stats.tax_expenses.prev_month}} ₽)
                   {% endif %}
-                  
                 {% endwith %}
               </p>
             </div>
@@ -206,13 +208,55 @@
       <div class="row mt-5">
         <div class="card mb-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-              <h6 class="text-white ps-3">Движения денежных средств</h6>
-              <a data-bs-toggle="modal" data-bs-target="#addCashflowModal" class="btn bg-gradient-dark mb-0 me-3" href="javascript:;"><i class="material-symbols-rounded text-sm">add</i>&nbsp;&nbsp;Добавить</a>
+            <div class="bg-gradient-dark shadow-dark border-radius-lg pt-3 pb-3 d-flex justify-content-between align-items-center">
+              <h6 class="text-white ps-3 mb-0">Движения денежных средств</h6>
+              <a data-bs-toggle="modal" data-bs-target="#addCashflowModal" class="btn bg-white mb-0 me-3" href="javascript:;"><i class="material-symbols-rounded text-sm">add</i>&nbsp;&nbsp;Добавить</a>
             </div>
           </div>
+
+          <!-- Форма фильтрации -->
+          <form action="" method="get" class="row d-flex g-3 align-items-center mt-2 mb-4">
+            <div class="col-auto">
+              {{ filter_form.cashflow_type_filter.label_tag }}
+              {{ filter_form.cashflow_type_filter }}
+            </div>
+            <div class="col-auto">
+              {{ filter_form.cashflow_category_filter.label_tag }}
+              {{ filter_form.cashflow_category_filter }}
+            </div>
+            <div class="col-auto">
+              {{ filter_form.cashflow_subcategory_filter.label_tag }}
+              {{ filter_form.cashflow_subcategory_filter }}
+            </div>
+            <div class="col-auto">
+              {{ filter_form.cashflow_status_filter.label_tag }}
+              {{ filter_form.cashflow_status_filter }}
+            </div>
+            <div class="col-auto">
+              {{ filter_form.created_at_min.label_tag }}
+              {{ filter_form.created_at_min }}
+            </div>
+            <div class="col-auto">
+              {{ filter_form.created_at_max.label_tag }}
+              {{ filter_form.created_at_max }}
+            </div>
+            <div class="col-auto">
+              {{ filter_form.sort_by.label_tag }}
+              {{ filter_form.sort_by }}
+            </div>
+            <div class="col-auto align-self-end">
+              <button type="submit" class="btn btn-dark mb-0">Применить</button>
+            </div>
+            <div class="col-auto align-self-end">
+              <a href="{{ request.path }}" class="btn btn-dark mb-0">Очистить фильтры</a>
+            </div>
+        </form>
+
+        <!-- Таблица -->
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-0">
+              <div>
+              </div>
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
@@ -279,14 +323,189 @@
                 </tbody>
               </table>
             </div>
+
+            <nav class="d-flex justify-content-center mt-5">
+              <ul class="pagination">
+                  {% if all_cashflows.has_previous %}
+                  <li class="page-item">
+                      <a class="page-link" href="?page={{ all_cashflows.previous_page_number }}">Предыдущая</a>
+                  </li>
+                  {% else %}
+                  <li class="page-item disabled">
+                      <span class="page-link">Предыдущая</span>
+                  </li>
+                  {% endif %}
+          
+                  {% for num in all_cashflows.paginator.page_range %}
+                  {% if num == all_cashflows.number %}
+                  <li class="page-item active">
+                      <span class="page-link">{{ num }}</span>
+                  </li>
+                  {% else %}
+                  <li class="page-item">
+                      <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                  </li>
+                  {% endif %}
+                  {% endfor %}
+          
+                  {% if all_cashflows.has_next %}
+                  <li class="page-item">
+                      <a class="page-link" href="?page={{ all_cashflows.next_page_number }}">Следующая</a>
+                  </li>
+                  {% else %}
+                  <li class="page-item disabled">
+                      <span class="page-link">Следующая</span>
+                  </li>
+                  {% endif %}
+              </ul>
+          </nav>
+
           </div>
         </div>
+
+        <div class="row mb-5">
+          <div class="ms-3">
+            <h3 class="mb-0 h4 font-weight-bolder">Полная статистика</h3>
+            <p class="mb-4">
+              Информация о каждом типе, категории и подкатегории
+            </p>
+          </div>
+
+          <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="ms-3 mb-3">
+              <h3 class="mb-0 h4 font-weight-bolder">Типы</h3>
+            </div>
+            {% for type_stats in stats.types %}
+              <div class="card mb-2">
+                <div class="card-header p-1 ps-3">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <p class="text-sm mb-0">{{ type_stats.name }}</p>
+                      <h5 class="mb-0">{{ type_stats.absolute|price_format }} ₽</h4>
+                    </div>
+  
+                  </div>
+                </div>
+                <hr class="dark horizontal my-0">
+                <div class="card-footer p-2 ps-3">
+                  <p class="mb-0 text-sm">
+                    {% with type_stats.relative as relative_value %}
+                      {% if relative_value > 0 %}
+                        <span class="text-success font-weight-bolder">
+                          +{{ relative_value|price_int_format }}%
+                        </span>
+                        по сравнению с прошлым месяцем ({{type_stats.prev_month}} ₽)
+                      {% elif relative_value == 0 %}
+                        как и в прошлом месяце
+                      {% else %}
+                        <span class="text-danger font-weight-bolder">
+                          {{ relative_value|price_int_format }}%
+                        </span>
+                        по сравнению с прошлым месяцем ({{type_stats.prev_month}} ₽)
+                      {% endif %}
+                    {% endwith %}
+                  </p>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="ms-3 mb-3">
+              <h3 class="mb-0 h4 font-weight-bolder">Категории</h3>
+            </div>
+            {% for category_stats in stats.categories %}
+              <div class="card mb-2">
+                <div class="card-header p-1 ps-3">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <p class="text-sm mb-0">{{ category_stats.name }}</p>
+                      <h5 class="mb-0">{{ category_stats.absolute|price_format }} ₽</h4>
+                    </div>
+                  </div>
+                </div>
+                <hr class="dark horizontal my-0">
+                <div class="card-footer p-1 ps-3">
+                  <p class="mb-0 text-sm">
+                    {% with category_stats.relative as relative_value %}
+                      {% if relative_value > 0 %}
+                        <span class="text-success font-weight-bolder">
+                          +{{ relative_value|price_int_format }}%
+                        </span>
+                        по сравнению с прошлым месяцем ({{category_stats.prev_month}} ₽)
+                      {% elif relative_value == 0 %}
+                        как и в прошлом месяце
+                      {% else %}
+                        <span class="text-danger font-weight-bolder">
+                          {{ relative_value|price_int_format }}%
+                        </span>
+                        по сравнению с прошлым месяцем ({{category_stats.prev_month}} ₽)
+                      {% endif %}
+                    {% endwith %}
+                  </p>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="ms-3 mb-3">
+              <h3 class="mb-0 h4 font-weight-bolder">Подкатегории</h3>
+            </div>
+            {% for subcategory_stats in stats.subcategories %}
+              <div class="card mb-2">
+                <div class="card-header p-1 ps-3">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <p class="text-sm mb-0">{{ subcategory_stats.name }}</p>
+                      <h6 class="mb-0">{{ subcategory_stats.absolute|price_format }} ₽</h4>
+                    </div>
+  
+                  </div>
+                </div>
+                <hr class="dark horizontal my-0">
+                <div class="card-footer p-1 ps-3">
+                  <p class="mb-0 text-sm">
+                    {% with subcategory_stats.relative as relative_value %}
+                      {% if relative_value > 0 %}
+                        <span class="text-success font-weight-bolder">
+                          +{{ relative_value|price_int_format }}%
+                        </span>
+                        по сравнению с прошлым месяцем ({{subcategory_stats.prev_month}} ₽)
+                      {% elif relative_value == 0 %}
+                        как и в прошлом месяце
+                      {% else %}
+                        <span class="text-danger font-weight-bolder">
+                          {{ relative_value|price_int_format }}%
+                        </span>
+                        по сравнению с прошлым месяцем ({{subcategory_stats.prev_month}} ₽)
+                      {% endif %}
+                    {% endwith %}
+                  </p>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
       </div>
-      
     </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script> 
+  // Сохраннеие текущих фильтров при пагинации
+  document.addEventListener("DOMContentLoaded", (() => {
+    document.querySelectorAll(".pagination a").forEach((e => {
+        e.addEventListener("click", (a => {
+            a.preventDefault();
+            const n = new URL(e.href);
+            new URLSearchParams(window.location.search).forEach(((e, a) => {
+                n.searchParams.has(a) || n.searchParams.set(a, e)
+            })), window.location.href = n.toString()
+        }))
+    }))
+  })) 
+  </script>
     <script>
       // Обновление категорий и подкатегорий
       const Endpoints = {
@@ -294,17 +513,18 @@
         GET_SUBCATEGORIES: `api/get_subcategories/`,
       }
 
+      // Очистка выбора
+      function clearOptions(field) {
+          field.innerHTML = '<option value="">---------</option>';
+      }
+
+      // Для формы создания ДДС
       function handleUpdatingFormFields() {
         const cashflowTypeField = document.getElementById('id_cashflow_type');
         const cashflowCategoryField = document.getElementById('id_cashflow_category');
         const cashflowSubcategoryField = document.getElementById('id_cashflow_subcategory');
 
         updateCategoriesField()
-    
-        // Очистка выбора
-        function clearOptions(field) {
-          field.innerHTML = '<option value="">---------</option>';
-        }
 
         // Обновление поля "Категория"
         function updateCategoriesField(cashflowTypeId) {
@@ -349,27 +569,19 @@
             }
           }
 
-    
           cashflowTypeField.addEventListener('change', function() {
             updateCategoriesField(this.value);
           });
-
           cashflowCategoryField.addEventListener('change', function() {
             updateSubcategoriesField(this.value);
           });
       }
+      // Для формы редактирования ДДС
       function handleUpdatingEditFormFields() {
         const cashflowTypeField = document.getElementById('edit_id_cashflow_type');
         const cashflowCategoryField = document.getElementById('edit_id_cashflow_category');
         const cashflowSubcategoryField = document.getElementById('edit_id_cashflow_subcategory');
 
-        console.log(cashflowTypeField)
-    
-        // Очистка выбора
-        function clearOptions(field) {
-          field.innerHTML = '<option value="">---------</option>';
-        }
-
         // Обновление поля "Категория"
         function updateCategoriesField(cashflowTypeId) {
           clearOptions(cashflowCategoryField);
@@ -386,7 +598,7 @@
                   cashflowCategoryField.appendChild(option);
                 });
               })
-              .catch(error => console.error('Error fetching categories:', error));
+              .catch(error => console.error('Ошибка при получении категорий:', error));
           } else {
             clearOptions(cashflowCategoryField)
           }
@@ -407,24 +619,153 @@
                     cashflowSubcategoryField.appendChild(option);
                   });
                 })
-                .catch(error => console.error('Error fetching subcategories:', error));
+                .catch(error => console.error('Ошибка при получении подкатегорий:', error));
             } else {
               clearOptions(cashflowSubcategoryField)
             }
           }
 
-    
           cashflowTypeField.addEventListener('change', function() {
             updateCategoriesField(this.value);
           });
-
           cashflowCategoryField.addEventListener('change', function() {
             updateSubcategoriesField(this.value);
           });
       }
-      handleUpdatingFormFields()
+
+      // Для формы с фильтрами
+      function handleUpdatingFiltersFields() {
+        const cashflowTypeField = document.getElementById('id_cashflow_type_filter');
+        const cashflowCategoryField = document.getElementById('id_cashflow_category_filter');
+        const cashflowSubcategoryField = document.getElementById('id_cashflow_subcategory_filter');
+
+        initializeFilters();
+
+        function initializeFilters() {
+          const url = new URL(window.location.href);
+          const params = url.searchParams;
+
+          const cashflowTypeId = params.get('cashflow_type_filter');
+          const cashflowCategoryId = params.get('cashflow_category_filter');
+
+          if (cashflowCategoryId) {
+            initializeSubcategoriesFields(cashflowCategoryId)
+          }
+          if (cashflowTypeId) {
+            initializeCategoriesFields(cashflowTypeId);
+          }
+        }
+        // Инициализация поля "Категория" с сохранением текущей выбранной опции
+        function initializeCategoriesFields(cashflowTypeId) {
+          const selectedCategoryValue = cashflowCategoryField.value; 
+          clearOptions(cashflowCategoryField);
+          clearOptions(cashflowSubcategoryField)
+          if (cashflowTypeId) {
+            fetch(`${Endpoints.GET_CATEGORIES}${cashflowTypeId}`)
+              .then(response => response.json())
+              .then(data => {
+                // clearOptions(cashflowCategoryField);
+                data.forEach(category => {
+                  const option = document.createElement('option');
+                  option.value = category.id;
+                  option.textContent = category.name;
+                  cashflowCategoryField.appendChild(option);
+
+                  if (selectedCategoryValue) {
+                    if (category.id == selectedCategoryValue) {
+                      option.selected = true;
+                    }
+                  }
+                });
+              })
+              .catch(error => console.error('Error fetching categories:', error));
+          } else {
+            clearOptions(cashflowCategoryField)
+          }
+        }
+        // Инициализация поля "Подкатегория" с сохранением текущей выбранной опции
+        function initializeSubcategoriesFields(cashflowCategoryId) {
+          const selectedSubcategoryValue = cashflowSubcategoryField.value;
+          clearOptions(cashflowSubcategoryField);
+          if (cashflowCategoryId) {
+            fetch(`${Endpoints.GET_SUBCATEGORIES}${cashflowCategoryId}`)
+              .then(response => response.json())
+              .then(data => {
+                data.forEach(subcategory => {
+                  const option = document.createElement('option');
+                  option.value = subcategory.id;
+                  option.textContent = subcategory.name;
+                  cashflowSubcategoryField.appendChild(option);
+
+                  if (selectedSubcategoryValue) {
+                    if (subcategory.id == selectedSubcategoryValue) {
+                      option.selected = true;
+                    }
+                  }
+                });
+              })
+              .catch(error => console.error('Error fetching subcategories:', error));
+          } else {
+            clearOptions(cashflowSubcategoryField)
+          }
+        }
+
+        // Обновление поля "Категория"
+        function updateCategoriesField(cashflowTypeId) {
+          clearOptions(cashflowCategoryField);
+          clearOptions(cashflowSubcategoryField)
+
+          if (cashflowTypeId) {
+            fetch(`${Endpoints.GET_CATEGORIES}${cashflowTypeId}`)
+              .then(response => response.json())
+              .then(data => {
+                // clearOptions(cashflowCategoryField);
+                data.forEach(category => {
+                  const option = document.createElement('option');
+                  option.value = category.id;
+                  option.textContent = category.name;
+                  cashflowCategoryField.appendChild(option);
+                });
+              })
+              .catch(error => console.error('Error fetching categories:', error));
+          } else {
+            clearOptions(cashflowCategoryField)
+          }
+        } 
+
+        // Обновление поля "Подкатегория"
+        function updateSubcategoriesField(cashflowCategoryId) {
+          clearOptions(cashflowSubcategoryField);
+          if (cashflowCategoryId) {
+            fetch(`${Endpoints.GET_SUBCATEGORIES}${cashflowCategoryId}`)
+              .then(response => response.json())
+              .then(data => {
+                data.forEach(subcategory => {
+                  const option = document.createElement('option');
+                  option.value = subcategory.id;
+                  option.textContent = subcategory.name;
+                  cashflowSubcategoryField.appendChild(option);
+                });
+              })
+              .catch(error => console.error('Error fetching subcategories:', error));
+          } else {
+            clearOptions(cashflowSubcategoryField)
+          }
+        }
+
+        cashflowTypeField.addEventListener('change', function() {
+          console.log('fer')
+          updateCategoriesField(this.value);
+        });
+        cashflowCategoryField.addEventListener('change', function() {
+          updateSubcategoriesField(this.value);
+        });
+      }
+
+      handleUpdatingFormFields();
+      handleUpdatingFiltersFields();
       
-    
+      // Форма редактирования
       document.querySelectorAll('.edit-btn').forEach(function(button) {
         button.addEventListener('click', function() {
             const cashflowId = this.getAttribute('data-id'); // Получаем ID ДДС из атрибута data-id

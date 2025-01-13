@@ -13,4 +13,6 @@ urlpatterns = [
 
     path('api/get_categories/<int:cashflow_type_id>/', get_categories, name='get_categories_api'),
     path('api/get_subcategories/<int:cashflow_category_id>/', get_subcategories, name='get_subcategories_api'),
+
+    path('api/test_stats/', test_stats_api.as_view(), name='test_stats'),
 ]

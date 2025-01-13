@@ -2,7 +2,10 @@ from django.shortcuts import redirect, render
 from django.http import JsonResponse
 from django.views import View 
 from django.template.loader import render_to_string 
-from .forms import CashflowForm, CashflowEditForm
+from .forms import (
+    CashflowForm, 
+    CashflowFilterForm,
+)
 from .models import (
     Cashflow, 
     CashflowStatus, 
@@ -12,28 +15,51 @@ from .models import (
 )
 from .services import (
     generate_stats,
+    get_paginated_collection
 )
 
 
 class CashflowsView(View): 
     def get(self, request): 
-        form = CashflowForm()
+        create_cashflow_form = CashflowForm()
+        filter_form = CashflowFilterForm(request.GET)
         cashflow_types = CashflowType.objects.all()
         cashflow_statuses = CashflowStatus.objects.all()
         cashflow_categories = CashflowCategory.objects.all() 
         cashflow_subcategories = CashflowSubcategory.objects.all()
-
-        last_cashflows = Cashflow.objects.all()[:10]
-        all_cashflows = Cashflow.objects.all()[:100]
-
         stats = generate_stats()
+
+        cashflows = Cashflow.objects.for_current_month()
+        if filter_form.is_valid():
+            cd = filter_form.cleaned_data
+            if cd['cashflow_type_filter']:
+                cashflows = cashflows.filter(cashflow_type=cd['cashflow_type_filter'])
+            if cd['cashflow_status_filter']:
+                cashflows = cashflows.filter(cashflow_status=cd['cashflow_status_filter'])
+            if cd['cashflow_category_filter']:
+                cashflows = cashflows.filter(cashflow_category=cd['cashflow_category_filter'])
+            if cd['cashflow_subcategory_filter']:
+                cashflows = cashflows.filter(cashflow_subcategory=cd['cashflow_subcategory_filter'])
+            if cd['created_at_min']:
+                cashflows = cashflows.filter(created_at__gte=cd['created_at_min'])
+            if cd['created_at_max']:
+                cashflows = cashflows.filter(created_at__lte=cd['created_at_max'])
+            if cd['sort_by']: 
+                if cd['sort_by'] != 'default':
+                    cashflows = cashflows.order_by(cd['sort_by'])
+
+
+        cashflows = get_paginated_collection(
+            request=request, collection=cashflows, 
+            count_per_page=5
+        )
 
         context = {
             'segment': 'cashflows', 
 
-            'form': form, 
-            'newest_cashflows': last_cashflows,
-            'all_cashflows': all_cashflows,
+            'form': create_cashflow_form,
+            'filter_form': filter_form, 
+            'all_cashflows': cashflows,
 
             'cashflow_types': cashflow_types, 
             'cashflow_statuses': cashflow_statuses, 
@@ -59,6 +85,7 @@ class CashflowsView(View):
                 cashflow_subcategory = cd.get('cashflow_subcategory')
             )
             new_cashflow.save()
+
             return redirect('cashflows:cashflows')
         else: 
             form = CashflowForm()
@@ -122,7 +149,7 @@ class GetRenderedEditForm(View):
         rendered_edit_form = render_to_string(
             template_name = 'cashflows/includes/rendered/edit_form.html', 
             context = {
-                'form': CashflowEditForm(instance=cashflow),
+                'form': CashflowForm(instance=cashflow),
                 'cashflow_id': cashflow_id
             },
             request=request
@@ -142,3 +169,12 @@ def get_subcategories(request, cashflow_category_id: int) -> JsonResponse:
         subcategories = CashflowSubcategory.objects.filter(cashflow_category_id=cashflow_category_id).values('id', 'name')
         return JsonResponse(list(subcategories), safe=False)
     return JsonResponse({'error': 'Отсутствует параметр cashflow_category_id'}, status=400)
+
+
+
+
+class test_stats_api(View): 
+    def get(self, request): 
+        stats = generate_stats()
+
+        return JsonResponse(data=stats)
