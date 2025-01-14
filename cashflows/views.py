@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views import View 
 from django.template.loader import render_to_string
-
+from django.db.models import Min, Max
 from cashflows.services.xlsx_parser import load_cashflows_from_file 
 from .forms import (
     CashflowForm, 
@@ -50,7 +50,6 @@ class CashflowsView(View):
             if cd['sort_by']: 
                 if cd['sort_by'] != 'default':
                     cashflows = cashflows.order_by(cd['sort_by'])
-                    print(cashflows)
 
 
         cashflows = get_paginated_collection(
@@ -133,8 +132,6 @@ class EditCashflowView(View):
         cashflow_id = request.POST.get('cashflow_id')
         form = CashflowForm(request.POST) 
 
-        print(request.POST)
-
         if form.is_valid(): 
             cd = form.cleaned_data
 
@@ -162,10 +159,28 @@ class LoadBankStatementView(View):
     def post(self, request): 
         xlsx_file = request.FILES['xlsx_file'] 
         
-        load_cashflows_from_file(xlsx_file)
+        loaded_cashflows = load_cashflows_from_file(xlsx_file)
 
-        return redirect('cashflows:cashflows')
+        all_dates = [obj.created_at for obj in loaded_cashflows]
+        print(all_dates)
+        min_date = min(all_dates)
+        print(all_dates)
+        max_date = max(all_dates)
 
+        context = {
+            'segment': 'load done',
+
+            'errors': [], 
+            'loaded_cashflows': loaded_cashflows,
+            'min_date': min_date, 
+            'max_date': max_date,
+        }
+
+        
+        print(min_date)
+
+
+        return render(request, 'cashflows/cashflows_load_done.html', context)
 
 
 class GetRenderedEditForm(View): 
@@ -182,8 +197,6 @@ class GetRenderedEditForm(View):
         )
         return JsonResponse(rendered_edit_form, safe=False)
     
-
-
 
 def get_categories(request, cashflow_type_id: int) -> JsonResponse: 
     if cashflow_type_id:

@@ -42,6 +42,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 INSTALLED_APPS = [
     'cashflows',
+    'hr',
     'admin_material.apps.AdminMaterialDashboardConfig',
 
     'django.contrib.admin',

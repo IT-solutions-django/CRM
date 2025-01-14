@@ -1,0 +1,56 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load price_filters %}
+
+{% block content %}
+
+<div class="ms-3">
+    <h3 class="mb-0 h4 font-weight-bolder">Загрузка прошла успешно</h3>
+    <p class="mb-4">
+      Ниже представлена информация о загруженных движениях денежных средств
+    </p>
+  </div>
+
+<div class="card h-100 me-3 ms-3 mt-2">
+    <div class="card-header pb-0 px-3">
+      <div class="row">
+        <div class="col-md-6">
+          <h6 class="mb-0">Ваши финансовые операции</h6>
+        </div>
+        <div class="col-md-6 d-flex justify-content-start justify-content-md-end align-items-center">
+          <i class="material-symbols-rounded me-2 text-lg">date_range</i>
+          <small>{{ min_date|date:"d.m.Y" }} - {{ max_date|date:"d.m.Y" }}</small>
+        </div>
+      </div>
+    </div>
+    <div class="card-body pt-4 p-3">
+      <ul class="list-group">
+        {% for cashflow in loaded_cashflows %}
+            <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                <div class="d-flex align-items-center">
+                {% if cashflow.is_income %}
+                <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 p-3 btn-sm d-flex align-items-center justify-content-center"><i class="material-symbols-rounded text-lg">expand_less</i></button>
+                {% else %}
+                    <button class="btn btn-icon-only btn-rounded btn-outline-danger mb-0 me-3 p-3 btn-sm d-flex align-items-center justify-content-center"><i class="material-symbols-rounded text-lg">expand_more</i></button>
+                {% endif %}
+                <div class="d-flex flex-column">
+                    <h6 class="mb-1 text-dark text-sm">{{ cashflow.cashflow_subcategory.name }}</h6>
+                    <span class="text-xs">{{ cashflow.created_at|date:"d.m.Y" }}</span>
+                </div>
+                </div>
+                {% if cashflow.is_income %}
+                    <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
+                        + {{ cashflow.amount|price_format }}₽
+                    </div>
+                {% else %}
+                    <div class="d-flex align-items-center text-danger text-gradient text-sm font-weight-bold">
+                        - {{ cashflow.amount|price_format }}₽
+                    </div>
+                {% endif %}
+            </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+{% endblock %}

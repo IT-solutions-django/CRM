@@ -12,5 +12,8 @@ class CASHFLOWS_NAMES:
         EXPENSES = 'Списание'
 
     class Categories: 
-        PERSONAL = 'Личные потребности'
-        BUSINESS = 'Бизнес'
+        PERSONAL_FROM_STATEMENT = 'Из банковской выписки (физлицо)'
+        BUSINESS_FROM_STATEMENT = 'Из банковской выписки (ИП)'
+
+    class Subcategories: 
+        BUSINESS_FROM_STATEMENT = 'Из банковской выписки (ИП)'

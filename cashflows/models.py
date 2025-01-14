@@ -102,6 +102,12 @@ class Cashflow(models.Model):
 
     objects = CashflowManager()
 
+    def is_income(self): 
+        return self.cashflow_type.name == CASHFLOWS_NAMES.Types.INCOMES 
+    
+    def is_expense(self): 
+        return self.cashflow_type.name == CASHFLOWS_NAMES.Types.EXPENSES 
+
     class Meta: 
         verbose_name = 'Движение денежных средств'
         verbose_name_plural = 'ДДС'

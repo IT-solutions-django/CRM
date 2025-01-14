@@ -109,6 +109,7 @@
                     <span class="text-success font-weight-bolder">
                       +{{ relative_value|price_int_format }}%
                     </span>
+                    <br>
                     по сравнению с прошлым месяцем ({{stats.business_incomes.prev_month|price_format}} ₽)
                   {% elif relative_value == 0 %}
                     как и в прошлом месяце
@@ -116,6 +117,7 @@
                     <span class="text-danger font-weight-bolder">
                       {{ relative_value|price_int_format }}%
                     </span>
+                    <br>
                     по сравнению с прошлым месяцем ({{stats.business_incomes.prev_month|price_format}} ₽)
                   {% endif %}
                 {% endwith %}
@@ -144,6 +146,7 @@
                     <span class="text-danger font-weight-bolder">
                       +{{ relative_value|price_int_format }}%
                     </span>
+                    <br>
                     по сравнению с прошлым месяцем ({{stats.business_expenses.prev_month|price_format}} ₽)
                   {% elif relative_value == 0 %}
                     как и в прошлом месяце
@@ -151,6 +154,7 @@
                     <span class="text-success font-weight-bolder">
                       {{ relative_value|price_int_format }}%
                     </span>
+                    <br>
                     по сравнению с прошлым месяцем ({{stats.business_expenses.prev_month|price_format}} ₽)
                   {% endif %}
                 {% endwith %}
@@ -179,6 +183,7 @@
                     <span class="text-dark font-weight-bolder">
                       +{{ relative_value|price_int_format }}%
                     </span>
+                    <br>
                     по сравнению с прошлым месяцем ({{stats.personal_expenses.prev_month|price_format}} ₽)
                   {% elif relative_value == 0 %}
                     как и в прошлом месяце
@@ -186,6 +191,7 @@
                     <span class="text-dark font-weight-bolder">
                       {{ relative_value|price_int_format }}%
                     </span>
+                    <br>
                     по сравнению с прошлым месяцем ({{stats.personal_expenses.prev_month|price_format}} ₽)
                   {% endif %}
                 {% endwith %}
@@ -214,6 +220,7 @@
                     <span class="text-danger font-weight-bolder">
                       +{{ relative_value|price_int_format }}%
                     </span>
+                    <br>
                     по сравнению с прошлым месяцем ({{stats.tax_expenses.prev_month|price_format}} ₽)
                   {% elif relative_value == 0 %}
                     как и в прошлом месяце
@@ -221,6 +228,7 @@
                     <span class="text-success font-weight-bolder">
                       {{ relative_value|price_int_format }}%
                     </span>
+                    <br>
                     по сравнению с прошлым месяцем ({{stats.tax_expenses.prev_month|price_format}} ₽)
                   {% endif %}
                 {% endwith %}
@@ -530,7 +538,7 @@
                   </div>
                 </div>
                 <hr class="dark horizontal my-0">
-                <div class="card-footer p-2 ps-3">
+                <div class="card-footer p-1 ps-3">
                   <p class="mb-0 text-sm">
                     {% with type_stats.relative as relative_value %}
                       {% if relative_value > 0 %}
@@ -553,7 +561,7 @@
             {% endfor %}
           </div>
 
-          <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="stats__column col-xl-3 col-sm-6 mb-xl-0 mb-4">
             <div class="ms-3 mb-3">
               <h3 class="mb-0 h4 font-weight-bolder">Категории</h3>
             </div>
@@ -563,7 +571,7 @@
                   <div class="d-flex justify-content-between">
                     <div>
                       <p class="text-sm mb-0">{{ category_stats.name }}</p>
-                      <h5 class="mb-0">{{ category_stats.absolute|price_format }} ₽</h4>
+                      <h6 class="mb-0">{{ category_stats.absolute|price_format }} ₽</h4>
                     </div>
                   </div>
                 </div>
@@ -591,7 +599,7 @@
             {% endfor %}
           </div>
 
-          <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="stats__column col-xl-3 col-sm-6 mb-xl-0 mb-4">
             <div class="ms-3 mb-3">
               <h3 class="mb-0 h4 font-weight-bolder">Подкатегории</h3>
             </div>

@@ -16,3 +16,9 @@
     border-color: transparent;
     color: white !important
 }
+
+
+.stats__column {
+  max-height: 428px;
+  overflow-y: scroll;
+}
