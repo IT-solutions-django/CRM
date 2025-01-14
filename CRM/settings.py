@@ -35,6 +35,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
+    'http://*.79.137.133.148',
 ]
 
 
@@ -43,6 +44,7 @@ CSRF_TRUSTED_ORIGINS = [
 INSTALLED_APPS = [
     'cashflows',
     'hr',
+    
     'admin_material.apps.AdminMaterialDashboardConfig',
 
     'django.contrib.admin',
