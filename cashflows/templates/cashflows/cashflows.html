@@ -4,7 +4,6 @@
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'styles.css' %}">
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
 
 <!-- Модальное окно для добавления ДДС -->
 <div class="modal fade" id="addCashflowModal" tabindex="-1" aria-labelledby="addCashflowModalLabel" aria-hidden="true">
@@ -269,10 +268,6 @@
               {{ filter_form.created_at_max.label_tag }}
               {{ filter_form.created_at_max }}
             </div>
-            <div class="col-auto">
-              {{ filter_form.sort_by.label_tag }}
-              {{ filter_form.sort_by }}
-            </div>
             <div class="col-auto align-self-end">
               <button type="submit" class="btn btn-dark mb-0">Применить</button>
             </div>
@@ -289,13 +284,132 @@
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Тип</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Подкатегория</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Категория</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Статус</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Сумма</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Комментарий</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Дата</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                      <a class="sortLink" href="
+                      {% if filter_form.cleaned_data.sort_by == 'cashflow_type__name' %}
+                        ?sort_by=-cashflow_type__name
+                      {% else %}
+                      ?sort_by=cashflow_type__name
+                      {% endif %}
+                      ">
+                       Тип 
+                       {% with filter_form.cleaned_data.sort_by as sort_by %}
+                        {% if sort_by == 'cashflow_type__name' %}
+                          (А-Я)
+                        {% elif sort_by == '-cashflow_type__name' %}
+                         (Я-А)
+                        {% endif %}
+                       {% endwith %}
+                      </a>
+                    </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                      <a class="sortLink" href="
+                      {% if filter_form.cleaned_data.sort_by == 'cashflow_subcategory__name' %}
+                        ?sort_by=-cashflow_subcategory__name
+                      {% else %}
+                        ?sort_by=cashflow_subcategory__name
+                      {% endif %}
+                      ">
+                        Подкатегория
+                        {% with filter_form.cleaned_data.sort_by as sort_by %}
+                          {% if sort_by == 'cashflow_subcategory__name' %}
+                            (А-Я)
+                          {% elif sort_by == '-cashflow_subcategory__name' %}
+                            (Я-А)
+                          {% endif %}
+                        {% endwith %}
+                      </a>
+                    </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                      <a class="sortLink" href="
+                      {% if filter_form.cleaned_data.sort_by == 'cashflow_category__name' %}
+                        ?sort_by=-cashflow_category__name
+                      {% else %}
+                        ?sort_by=cashflow_category__name
+                      {% endif %}
+                      ">
+                        Категория
+                        {% with filter_form.cleaned_data.sort_by as sort_by %}
+                          {% if sort_by == 'cashflow_category__name' %}
+                            (А-Я)
+                          {% elif sort_by == '-cashflow_category__name' %}
+                           (Я-А)
+                          {% endif %}
+                        {% endwith %}
+                      </a>
+                    </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                      <a class="sortLink" href="
+                      {% if filter_form.cleaned_data.sort_by == 'cashflow_status__name' %}
+                        ?sort_by=-cashflow_status__name
+                      {% else %}
+                        ?sort_by=cashflow_status__name
+                      {% endif %}
+                      ">
+                        Статус
+                        {% with filter_form.cleaned_data.sort_by as sort_by %}
+                          {% if sort_by == 'cashflow_status__name' %}
+                            (А-Я)
+                          {% elif sort_by == '-cashflow_status__name' %}
+                           (Я-А)
+                          {% endif %}
+                        {% endwith %}
+                      </a>
+                    </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                      <a class="sortLink" href="
+                      {% if filter_form.cleaned_data.sort_by == 'amount' %}
+                        ?sort_by=-amount
+                      {% else %}
+                        ?sort_by=amount
+                      {% endif %}
+                      ">
+                        Сумма
+                        {% with filter_form.cleaned_data.sort_by as sort_by %}
+                          {% if sort_by == 'amount' %}
+                            (по возрастанию)
+                          {% elif sort_by == '-amount' %}
+                           (по убыванию)
+                          {% endif %}
+                        {% endwith %}
+                      </a>
+                    </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                      <a class="sortLink" href="
+                      {% if filter_form.cleaned_data.sort_by == 'comment' %}
+                        ?sort_by=-comment
+                      {% else %}
+                        ?sort_by=comment
+                      {% endif %}
+                      ">
+                        Комментарий
+                        {% with filter_form.cleaned_data.sort_by as sort_by %}
+                          {% if sort_by == 'comment' %}
+                            (А-Я)
+                          {% elif sort_by == '-comment' %}
+                            (Я-А)
+                          {% endif %}
+                        {% endwith %}
+                      </a>
+                    </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                      <a class="sortLink" href="
+                      {% if filter_form.cleaned_data.sort_by == 'created_at' %}
+                        ?sort_by=-created_at
+                      {% else %}
+                        ?sort_by=created_at
+                      {% endif %}
+                      ">
+                        Дата
+                        {% with filter_form.cleaned_data.sort_by as sort_by %}
+                          {% if sort_by == 'created_at' %}
+                            (сначала старые)
+                          {% elif sort_by == '-created_at' %}
+                            (сначала новые)
+                          {% endif %}
+                        {% endwith %}
+                      </a>
+                    </th>
                     <th class="text-secondary opacity-7"></th>
                   </tr>
                 </thead>
@@ -542,6 +656,24 @@
               new URLSearchParams(window.location.search).forEach(((e, a) => {
                   n.searchParams.has(a) || n.searchParams.set(a, e)
               })), window.location.href = n.toString()
+          }))
+      }))
+
+      // Сохранение текущих фильтров при сортировке
+      document.querySelectorAll(".sortLink").forEach((e => {
+          e.addEventListener("click", (a => {
+            a.preventDefault();
+              const n = new URL(e.href);
+              const params = new URLSearchParams(window.location.search);
+
+              params.delete("page");
+              params.forEach((value, key) => {
+                  if (!n.searchParams.has(key)) {
+                      n.searchParams.set(key, value);
+                  }
+              });
+
+        window.location.href = n.toString();
           }))
       }))
     })) 

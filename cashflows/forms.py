@@ -63,17 +63,21 @@ class CashflowForm(forms.ModelForm):
 class CashflowFilterForm(forms.Form): 
     SORT_CHOICES = [
         ('default', '---------'),
-        ('cashflow_type', 'Тип (А-Я)'),
-        ('-cashflow_type', 'Тип (Я-А)'),
         
-        ('cashflow_subcategory', 'Подкатегория (А-Я)'),
-        ('-cashflow_subcategory', 'Подкатегория (Я-А)'),
+        ('cashflow_type__name', 'Тип (А-Я)'),
+        ('-cashflow_type__name', 'Тип (Я-А)'),
+        
+        ('cashflow_subcategory__name', 'Подкатегория (А-Я)'),
+        ('-cashflow_subcategory__name', 'Подкатегория (Я-А)'),
 
-        ('cashflow_category', 'Категория (А-Я)'),
-        ('-cashflow_category', 'Категория (Я-А)'),
+        ('cashflow_category__name', 'Категория (А-Я)'),
+        ('-cashflow_category__name', 'Категория (Я-А)'),
 
-        ('cashflow_status', 'Статус (А-Я)'),
-        ('-cashflow_status', 'Статус (Я-А)'),
+        ('cashflow_status__name', 'Статус (А-Я)'),
+        ('-cashflow_status__name', 'Статус (Я-А)'),
+
+        ('comment', 'Комментарий (по возрастанию)'),
+        ('-comment', 'Комментарий (по убыванию)'),
 
         ('amount', 'Сумма (по возрастанию)'),
         ('-amount', 'Сумма (по убыванию)'),

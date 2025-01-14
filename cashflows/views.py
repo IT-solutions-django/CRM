@@ -50,6 +50,7 @@ class CashflowsView(View):
             if cd['sort_by']: 
                 if cd['sort_by'] != 'default':
                     cashflows = cashflows.order_by(cd['sort_by'])
+                    print(cashflows)
 
 
         cashflows = get_paginated_collection(
@@ -162,6 +163,8 @@ class LoadBankStatementView(View):
         xlsx_file = request.FILES['xlsx_file'] 
         
         load_cashflows_from_file(xlsx_file)
+
+        return redirect('cashflows:cashflows')
 
 
 
