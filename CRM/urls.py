@@ -28,6 +28,7 @@ urlpatterns = [
     path('', include('admin_material.urls')),
 
     path('cashflows/', include('cashflows.urls')),
+    path('hr/', include('hr.urls', namespace='hr')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
