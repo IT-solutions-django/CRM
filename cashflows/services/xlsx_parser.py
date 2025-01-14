@@ -20,6 +20,8 @@ def load_cashflows_from_file(xlsx_file: UploadedFile) -> QuerySet:
     wb = load_workbook(filename=xlsx_file, data_only=True)
     sheet = wb.worksheets[0]
 
+    __delete_all_loaded_cashflows()
+
     if _is_alpha_physical_person(sheet):  
         loaded_cashflows = _load_physical_person_statement(sheet)
 
