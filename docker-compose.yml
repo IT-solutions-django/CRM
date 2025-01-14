@@ -28,7 +28,6 @@ services:
       - ./media:/media
     networks:
       - dev
-    depends_on:
 
 networks:
   dev:
