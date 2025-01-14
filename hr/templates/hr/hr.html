@@ -98,22 +98,21 @@
                 <td>
                   <p class="text-sm text-secondary mb-0">{{ candidate.age }}</p>
                 </td>
+                <td class="text-center text-sm">
+                  {{ candidate.position }}
+                </td>
                 <td class="align-middle text-center">
                   <div class="d-flex align-items-center text-sm font-weight-bold">
                     {{ candidate.portfolio_link }}
                   </div>
-                
+                </td>
+                <td class="align-middle text-center">
+                  <span class="text-secondary text-xs font-weight-bold">{{ candidate.completed_test_task_link }}</span>
                 </td>
                 <td>
                   <div class="text-sm px-1">
                     {{ candidate.requested_datetime }}
                   </div>
-                </td>
-                <td class="text-center text-sm">
-                    {{ candidate.position }}
-                </td>
-                <td class="align-middle text-center">
-                  <span class="text-secondary text-xs font-weight-bold">{{ candidate.completed_test_task_link }}</span>
                 </td>
                 <td class="align-middle text-center">
                     <span class="text-secondary text-xs font-weight-bold">{{ candidate.test_task_given_datetime }}</span>
