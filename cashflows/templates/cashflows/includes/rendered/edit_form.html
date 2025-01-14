@@ -1,0 +1,51 @@
+{% csrf_token %}
+
+<div class="form-group">
+  <label for="id_amount">Сумма</label>
+  {{ form.amount }}
+</div>
+
+<div class="form-group">
+  <label for="id_cashflow_status">Статус</label>
+  {{ form.cashflow_status }}
+</div>
+
+<div class="form-group">
+  <label for="id_cashflow_type">Тип</label>
+  <select name="cashflow_type" id="edit_id_cashflow_type" class="form-control">
+      {% for choice in form.cashflow_type.field.queryset %}
+          <option value="{{ choice.id }}" {% if choice.id == form.cashflow_type.value %}selected{% endif %}>
+              {{ choice.name }}
+          </option>
+      {% endfor %}
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="id_cashflow_category">Категория</label>
+  <select name="cashflow_category" id="edit_id_cashflow_category" class="form-control">
+      {% for choice in form.cashflow_category.field.queryset %}
+          <option value="{{ choice.id }}" {% if choice.id == form.cashflow_category.value %}selected{% endif %}>
+              {{ choice.name }}
+          </option>
+      {% endfor %}
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="id_cashflow_subcategory">Подкатегория</label>
+  <select name="cashflow_subcategory" id="edit_id_cashflow_subcategory" class="form-control">
+      {% for choice in form.cashflow_subcategory.field.queryset %}
+          <option value="{{ choice.id }}" {% if choice.id == form.cashflow_subcategory.value %}selected{% endif %}>
+              {{ choice.name }}
+          </option>
+      {% endfor %}
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="id_comment">Комментарий</label>
+  {{ form.comment }}
+</div>
+
+<input type="hidden" name="cashflow_id" value="{{ cashflow_id }}">

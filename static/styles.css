@@ -1,0 +1,24 @@
+.page-item .page-link,
+.page-item span {
+  display: inherit !important;
+  align-items: inherit !important;
+  justify-content: inherit !important;
+  color: inherit !important;
+  padding: 4px 15px !important;
+  margin: inherit !important;
+  border-radius: inherit !important;
+  width: inherit !important;
+  height: inherit !important;
+  font-size: inherit !important;
+}
+.page-link.active, .active>.page-link {
+    background-color: var(--bs-dark) !important;
+    border-color: transparent;
+    color: white !important
+}
+
+
+.stats__column {
+  max-height: 428px;
+  overflow-y: scroll;
+}

@@ -10,3 +10,10 @@ class CASHFLOWS_NAMES:
     class Types: 
         INCOMES = 'Пополнение'
         EXPENSES = 'Списание'
+
+    class Categories: 
+        PERSONAL_FROM_STATEMENT = 'Из банковской выписки (физлицо)'
+        BUSINESS_FROM_STATEMENT = 'Из банковской выписки (ИП)'
+
+    class Subcategories: 
+        BUSINESS_FROM_STATEMENT = 'Из банковской выписки (ИП)'

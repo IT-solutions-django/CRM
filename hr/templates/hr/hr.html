@@ -1,0 +1,172 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load price_filters %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+
+<div class="row mt-5">
+    <div class="card mb-4">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+        <div class="bg-gradient-dark shadow-dark border-radius-lg pt-3 pb-3 d-flex justify-content-between align-items-center">
+          <h6 class="text-white ps-3 mb-0">Кандидаты</h6>
+          <div>
+            <!-- <a data-bs-toggle="modal" data-bs-target="#loadBankStatementModal" class="btn bg-white mb-0 me-3" href="javascript:;"><i class="material-symbols-rounded text-sm">add</i>&nbsp;&nbsp;Загрузить выписку из банка</a>
+            <a data-bs-toggle="modal" data-bs-target="#addCashflowModal" class="btn bg-white mb-0 me-3" href="javascript:;"><i class="material-symbols-rounded text-sm">add</i>&nbsp;&nbsp;Добавить</a> -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Форма фильтрации -->
+
+
+    <!-- Таблица -->
+      <div class="card-body px-0 pb-2">
+        <div class="table-responsive p-0">
+          <div>
+          </div>
+          <table class="table align-items-center mb-0">
+            <thead>
+              <tr>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                  <a class="sortLink">
+                   Имя
+                  </a>
+                </th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                  <a class="sortLink">
+                    Разница во времени
+                  </a>
+                </th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                  <a class="sortLink">
+                    Возраст
+                  </a>
+                </th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                  <a class="sortLink">
+                    Позиция
+                  </a>
+                </th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                  <a class="sortLink">
+                    Ссылка на портфолио
+                  </a>
+                </th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                  <a class="sortLink" href="">
+                    Ссылка на выполненное тестовое задание
+                  </a>
+                </th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    <a class="sortLink" href="">
+                      Дата отклика
+                    </a>
+                </th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    <a class="sortLink" href="">
+                      Дата выдачи тестового задания
+                    </a>
+                </th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    <a class="sortLink" href="">
+                      Дата выполнения тестового задания
+                    </a>
+                </th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    <a class="sortLink" href="">
+                      Статус
+                    </a>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for candidate in candidates %}
+              <tr>
+                <td>
+                  <p class="text-sm font-weight-bold mb-0">
+                    {{ candidate.name }}
+                  </p>
+                </td>
+                <td>
+                  <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-0 text-sm">{{ candidate.time_difference }}</h6>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <p class="text-sm text-secondary mb-0">{{ candidate.age }}</p>
+                </td>
+                <td class="align-middle text-center">
+                  <div class="d-flex align-items-center text-sm font-weight-bold">
+                    {{ candidate.portfolio_link }}
+                  </div>
+                
+                </td>
+                <td>
+                  <div class="text-sm px-1">
+                    {{ candidate.requested_datetime }}
+                  </div>
+                </td>
+                <td class="text-center text-sm">
+                    {{ candidate.position }}
+                </td>
+                <td class="align-middle text-center">
+                  <span class="text-secondary text-xs font-weight-bold">{{ candidate.completed_test_task_link }}</span>
+                </td>
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">{{ candidate.test_task_given_datetime }}</span>
+                </td>
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">{{ candidate.test_task_completed_datetime }}</span>
+                </td>
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">{{ candidate.status }}</span>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <nav class="d-flex justify-content-center mt-5">
+          <ul class="pagination">
+              {% if all_cashflows.has_previous %}
+              <li class="page-item">
+                  <a class="page-link" href="?page={{ all_cashflows.previous_page_number }}">Предыдущая</a>
+              </li>
+              {% else %}
+              <li class="page-item disabled">
+                  <span class="page-link">Предыдущая</span>
+              </li>
+              {% endif %}
+      
+              {% for num in all_cashflows.paginator.page_range %}
+              {% if num == all_cashflows.number %}
+              <li class="page-item active">
+                  <span class="page-link">{{ num }}</span>
+              </li>
+              {% else %}
+              <li class="page-item">
+                  <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+              </li>
+              {% endif %}
+              {% endfor %}
+      
+              {% if all_cashflows.has_next %}
+              <li class="page-item">
+                  <a class="page-link" href="?page={{ all_cashflows.next_page_number }}">Следующая</a>
+              </li>
+              {% else %}
+              <li class="page-item disabled">
+                  <span class="page-link">Следующая</span>
+              </li>
+              {% endif %}
+          </ul>
+      </nav>
+
+      </div>
+    </div>
+</div>
+{% endblock %}

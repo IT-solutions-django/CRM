@@ -27,7 +27,7 @@ class CashflowAdmin(admin.ModelAdmin):
     list_display = [
         'cashflow_subcategory', 
         'cashflow_category', 
-        'date', 
+        'created_at', 
         'amount',
         'comment'
     ]

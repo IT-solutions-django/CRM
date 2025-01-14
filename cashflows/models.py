@@ -1,6 +1,8 @@
 from django.db import models
 from datetime import date, timedelta
 import calendar
+from datetime import datetime
+from .config import CASHFLOWS_NAMES
 
 
 class CashflowStatus(models.Model): 
@@ -12,6 +14,15 @@ class CashflowStatus(models.Model):
 
     def __str__(self):
         return f'{self.name}'
+    
+    def get_business_status(): 
+        return CashflowStatus.objects.get(name=CASHFLOWS_NAMES.Statuses.BUSINESS) 
+    
+    def get_tax_status(): 
+        return CashflowStatus.objects.get(name=CASHFLOWS_NAMES.Statuses.TAX) 
+    
+    def get_personal_status(): 
+        return CashflowStatus.objects.get(name=CASHFLOWS_NAMES.Statuses.PERSONAL) 
 
 
 class CashflowType(models.Model): 
@@ -23,6 +34,13 @@ class CashflowType(models.Model):
 
     def __str__(self):
         return f'{self.name}'
+    
+    def get_income_type(): 
+        return CashflowType.objects.get(name=CASHFLOWS_NAMES.Types.INCOMES) 
+    
+    def get_expense_type(): 
+        return CashflowType.objects.get(name=CASHFLOWS_NAMES.Types.EXPENSES)
+
 
 
 class CashflowCategory(models.Model): 
@@ -52,11 +70,11 @@ class CashflowSubcategory(models.Model):
 class CashflowManager(models.Manager):    
     def for_current_month(self): 
         date_range = self._get_date_range_for_current_month() 
-        return self.filter(date__range=date_range)
+        return self.filter(created_at__range=date_range)
     
     def for_previous_month(self): 
         date_range = self._get_date_range_for_previous_month() 
-        return self.filter(date__range=date_range)
+        return self.filter(created_at__range=date_range)
 
     def _get_date_range_for_current_month(self):
         today = date.today()
@@ -74,7 +92,7 @@ class CashflowManager(models.Manager):
 
 
 class Cashflow(models.Model): 
-    date = models.DateField('Дата') 
+    created_at = models.DateTimeField('Дата', default=datetime.now) 
     amount = models.DecimalField('Сумма', max_digits=10, decimal_places=2) 
     comment = models.TextField('Комментарий', null=True, blank=True, max_length=100)
     cashflow_status = models.ForeignKey(verbose_name='Статус', to=CashflowStatus, on_delete=models.CASCADE)
@@ -84,8 +102,16 @@ class Cashflow(models.Model):
 
     objects = CashflowManager()
 
+    def is_income(self): 
+        return self.cashflow_type.name == CASHFLOWS_NAMES.Types.INCOMES 
+    
+    def is_expense(self): 
+        return self.cashflow_type.name == CASHFLOWS_NAMES.Types.EXPENSES 
 
     class Meta: 
         verbose_name = 'Движение денежных средств'
         verbose_name_plural = 'ДДС'
-        ordering = ['-date']
+        ordering = ['-created_at']
+
+    def __str__(self): 
+        return f'{self.cashflow_subcategory.name} | {self.amount}₽ | {self.created_at.strftime("%d.%m.%Y")}'

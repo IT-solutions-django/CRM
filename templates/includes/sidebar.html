@@ -45,12 +45,12 @@
           {% endfor %}
         {% endif %}
 
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link {% if 'dashboard' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "index" %}">
             <i class="material-symbols-rounded opacity-5">dashboard</i>
             <span class="nav-link-text ms-1">Дашборд</span>
           </a>
-        </li>
+        </li> -->
         <li class="nav-item">
           <a class="nav-link {% if 'cashflows' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "cashflows:cashflows" %}">
             <i class="material-symbols-rounded opacity-5">receipt_long</i>
@@ -58,41 +58,17 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if 'tables' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "tables" %}">
+          <a class="nav-link {% if 'hr' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "hr:hr" %}">
             <i class="material-symbols-rounded opacity-5">table_view</i>
-            <span class="nav-link-text ms-1">Таблицы</span>
+            <span class="nav-link-text ms-1">HR</span>
           </a>
         </li>
-        <!-- <li class="nav-item">
-          <a class="nav-link {% if 'virtual_reality' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "virtual_reality" %}">
-            <i class="material-symbols-rounded opacity-5">view_in_ar</i>
-            <span class="nav-link-text ms-1">Virtual Reality</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if 'rtl' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "rtl" %}">
-            <i class="material-symbols-rounded opacity-5">format_textdirection_r_to_l</i>
-            <span class="nav-link-text ms-1">RTL</span>
-          </a>
-        </li> -->
         <li class="nav-item">
           <a class="nav-link {% if 'notifications' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "notifications" %}">
             <i class="material-symbols-rounded opacity-5">notifications</i>
             <span class="nav-link-text ms-1">Уведомления</span>
           </a>
         </li>
-        <!-- <li class="nav-item">
-          <a class="nav-link {% if 'map' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "map" %}">
-            <i class="material-symbols-rounded opacity-5">map</i>
-            <span class="nav-link-text ms-1">Map</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if 'icons' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "icons" %}">
-            <i class="material-symbols-rounded opacity-5">flag</i>
-            <span class="nav-link-text ms-1">Icons</span>
-          </a>
-        </li> -->
         <li class="nav-item">
           <a class="nav-link {% if 'typography' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "typography" %}">
             <i class="material-symbols-rounded opacity-5">title</i>
